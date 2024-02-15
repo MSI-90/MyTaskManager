@@ -1,4 +1,6 @@
-﻿namespace MyTaskManager.Data
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MyTaskManager.Data
 {
     public class Category
     {

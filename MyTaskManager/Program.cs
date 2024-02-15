@@ -1,4 +1,10 @@
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using MyTaskManager.Data;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
+
 namespace MyTaskManager
 {
     public class Program
@@ -7,12 +13,20 @@ namespace MyTaskManager
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
 
+            // Add services to the container.
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            var connectionString = configuration.GetConnectionString("defaultConnection");
+            builder.Services.AddDbContext<TaskContext>(
+                options => options.UseNpgsql(connectionString));
 
             var app = builder.Build();
 

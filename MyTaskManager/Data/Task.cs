@@ -4,9 +4,9 @@
     {
         public int Id { get; set; }
         public string? TitleTask { get; set; }
-        public Category? CategoryId { get; set; }
-        public Priority? PrioryName { get; set; }
+        public Category Category { get; set; }
+        public Priority Priory { get; set; }
         public DateTime Expiration { get; set; }
-        public User? UserId { get; set; }
+        public User? User { get; set; }
     }
 }
