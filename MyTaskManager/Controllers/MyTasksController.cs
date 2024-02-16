@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyTaskManager.Data;
+using MyTaskManager.DTO;
 using MyTaskManager.Repositories.Interfaces;
 
 
@@ -25,11 +26,17 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<MyTask>> AddTask(MyTask newTask)
+        public async Task<ActionResult<MyTask>> AddTask(MyTaskDto newTask)
         {
             await _repository.AddTaskAsync(newTask);
 
-            return CreatedAtAction("GetTask", new { Id =  newTask.Id }, newTask);
+            return CreatedAtAction(nameof(GetTask), new { Id = newTask.Id }, newTask);
+        }
+
+        [HttpDelete]
+        public void DeleteTask(int id)
+        {
+            _repository.Delete(id);
         }
     }
 }

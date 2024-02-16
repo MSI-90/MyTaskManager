@@ -8,13 +8,13 @@ namespace MyTaskManager.Data
         [JsonIgnore]
         public int Id { get; set; }
 
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string Name { get; set; } = String.Empty;
 
-        [MaxLength(100)]
+        [MaxLength(150)]
         public string Description { get; set; } = String.Empty;
 
         [JsonIgnore]
-        public ICollection<MyTask> Tasks { get; set; }
+        public ICollection<MyTask>? Tasks { get; set; }
     }
 }

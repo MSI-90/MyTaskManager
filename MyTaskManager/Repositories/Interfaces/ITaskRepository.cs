@@ -1,4 +1,6 @@
-﻿using MyTaskManager.Data;
+﻿using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using MyTaskManager.Data;
+using MyTaskManager.DTO;
 
 namespace MyTaskManager.Repositories.Interfaces
 {
@@ -7,5 +9,7 @@ namespace MyTaskManager.Repositories.Interfaces
         Task<IEnumerable<MyTask>> GetAllTasksAsync();
         Task<MyTask> GetTaskAsync(int id);
         Task<MyTask> AddTaskAsync(MyTask task);
+        Task<MyTask> AddTaskAsync(MyTaskDto task);
+        void Delete(int id);
     }
 }

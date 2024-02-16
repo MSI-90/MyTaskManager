@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MyTaskManager.Data;
+using MyTaskManager.Repositories;
+using MyTaskManager.Repositories.Interfaces;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
@@ -20,13 +22,17 @@ namespace MyTaskManager
 
             // Add services to the container.
             builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+
             var connectionString = configuration.GetConnectionString("defaultConnection");
             builder.Services.AddDbContext<TaskContext>(
                 options => options.UseNpgsql(connectionString));
+
+            builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
             var app = builder.Build();
 
