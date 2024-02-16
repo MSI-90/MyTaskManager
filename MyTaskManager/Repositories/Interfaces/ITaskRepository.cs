@@ -2,8 +2,10 @@
 
 namespace MyTaskManager.Repositories.Interfaces
 {
-    internal interface ITaskRepository
+    public interface ITaskRepository
     {
-        Task<MyTask> AddTask(MyTask task);
+        Task<IEnumerable<MyTask>> GetAllTasksAsync();
+        Task<MyTask> GetTaskAsync(int id);
+        Task<MyTask> AddTaskAsync(MyTask task);
     }
 }
