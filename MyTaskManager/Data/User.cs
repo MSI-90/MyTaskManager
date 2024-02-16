@@ -1,10 +1,16 @@
-﻿namespace MyTaskManager.Data
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MyTaskManager.Data
 {
     public class User
     {
         public int Id { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
+
+        [MaxLength(20)]
+        public string FirstName { get; set; } = String.Empty;
+
+        [MaxLength(30)]
+        public string LastName { get; set; } = String.Empty;
         public ICollection<Task> Tasks { get; set; }
     }
 }
