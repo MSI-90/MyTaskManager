@@ -19,6 +19,12 @@ namespace MyTaskManager.Controllers
         readonly ITaskRepository _repository;
         public MyTasksController(ITaskRepository repository) => _repository = repository;
 
+        [HttpGet]
+        public async Task<IEnumerable<MyTask>> Get()
+        {
+            return await _repository.GetAllTasksAsync();
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<MyTask>> GetTask(int id)
         {

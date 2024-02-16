@@ -10,7 +10,15 @@ namespace MyTaskManager.Repositories
         private readonly TaskContext _context;
         public TaskRepository(TaskContext context) => _context = context;
 
-        public async Task<IEnumerable<MyTask>> GetAllTasksAsync() => await _context.Tasks.ToListAsync();
+        public async Task<IEnumerable<MyTask>> GetAllTasksAsync()
+        {
+            return await _context.Tasks
+                .Include(c => c.Category)
+                .Include(p => p.Priory)
+                .Include(u => u.User)
+                .ToListAsync();
+        }
+            
 
         public async Task<MyTask> GetTaskAsync(int id)
         {
@@ -20,6 +28,7 @@ namespace MyTaskManager.Repositories
                 return await _context.Tasks
                 .Include(c => c.Category)
                 .Include(p => p.Priory)
+                .Include(u => u.User)
                 .SingleOrDefaultAsync(t => t.Id == id) ?? new MyTask();
         }
 
