@@ -12,6 +12,6 @@ namespace MyTaskManager.Data
 
         [MaxLength(50)]
         public string Description { get; set; } = String.Empty;
-        public ICollection<Task> Tasks { get; set; }
+        public ICollection<MyTask> Tasks { get; set; }
     }
 }

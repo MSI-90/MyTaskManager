@@ -1,6 +1,6 @@
 ﻿namespace MyTaskManager.Data
 {
-    public class Task
+    public class MyTask
     {
         public int Id { get; set; }
         public string TitleTask { get; set; } = string.Empty;

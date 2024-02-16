@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyTaskManager.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyTaskManager.Migrations
 {
     [DbContext(typeof(TaskContext))]
-    partial class TaskContextModelSnapshot : ModelSnapshot
+    [Migration("20240216072947_editEntituesInitialModified")]
+    partial class editEntituesInitialModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +48,30 @@ namespace MyTaskManager.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("MyTaskManager.Data.MyTask", b =>
+            modelBuilder.Entity("MyTaskManager.Data.Priority", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descrption")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Priority");
+                });
+
+            modelBuilder.Entity("MyTaskManager.Data.Task", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -80,29 +106,6 @@ namespace MyTaskManager.Migrations
                     b.ToTable("Tasks");
                 });
 
-            modelBuilder.Entity("MyTaskManager.Data.Priority", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Descrption")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Priority");
-                });
-
             modelBuilder.Entity("MyTaskManager.Data.User", b =>
                 {
                     b.Property<int>("Id")
@@ -126,7 +129,7 @@ namespace MyTaskManager.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MyTaskManager.Data.MyTask", b =>
+            modelBuilder.Entity("MyTaskManager.Data.Task", b =>
                 {
                     b.HasOne("MyTaskManager.Data.Category", "Category")
                         .WithMany("Tasks")
