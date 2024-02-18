@@ -44,15 +44,10 @@ namespace MyTaskManager.Repositories
 
             var task = new MyTask
             {
-                //Id = taskDto.Id,
                 TitleTask = taskDto.TitleTask,
                 Expiration = taskDto.Expiration,
-                Category = new Category { Name = taskDto.Category, Description = taskDto.CategoryDescription},
+                Category = new Category { Name = taskDto.Category, Description = taskDto.CategoryDescription },
                 Priory = new Priority { Name = taskDto.Priority.ToString() ?? String.Empty }
-                //User = new User 
-                //{
-                //    FirstName = taskDto.UserFirstName, LastName = taskDto.UserLastName
-                //}
             };
 
             await _context.Tasks.AddAsync(task);

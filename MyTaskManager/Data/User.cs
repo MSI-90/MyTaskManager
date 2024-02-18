@@ -15,6 +15,14 @@ namespace MyTaskManager.Data
         [MaxLength(30)]
         public string LastName { get; set; } = String.Empty;
 
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = String.Empty;
+
+        [Required]
+        [MaxLength(20)]
+        public string Password { get; set; } = String.Empty;
+
         [JsonIgnore]
         public ICollection<MyTask>? Tasks { get; set; }
     }
