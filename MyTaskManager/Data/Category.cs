@@ -5,7 +5,6 @@ namespace MyTaskManager.Data
 {
     public class Category
     {
-        [JsonIgnore]
         public int Id { get; set; }
 
         [MaxLength(50)]

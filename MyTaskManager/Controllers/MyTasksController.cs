@@ -39,10 +39,18 @@ namespace MyTaskManager.Controllers
             return CreatedAtAction(nameof(GetTask), new { Id = newTask.Id }, newTask);
         }
 
-        [HttpDelete]
-        public void DeleteTask(int id)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteTask(int id)
         {
-            _repository.Delete(id);
+            var task = _repository.GetTaskAsync(id).Result;
+
+            if (task.Id > 0)
+            {
+                _repository.Delete(task);
+                return Ok();
+            }
+            
+            return NotFound();
         }
     }
 }

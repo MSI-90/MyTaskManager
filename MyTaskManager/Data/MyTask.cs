@@ -5,7 +5,6 @@ namespace MyTaskManager.Data
 {
     public class MyTask
     {
-        [JsonIgnore]
         public int Id { get; set; }
         
         [MaxLength(50)]

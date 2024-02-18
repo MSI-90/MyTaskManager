@@ -5,7 +5,6 @@ namespace MyTaskManager.Data
 {
     public class User
     {
-        [JsonIgnore]
         public int Id { get; set; }
 
         [Required]
