@@ -10,6 +10,6 @@ namespace MyTaskManager.Repositories.Interfaces
         Task<MyTask> GetTaskAsync(int id);
         Task<MyTask> AddTaskAsync(MyTask task);
         Task<MyTask> AddTaskAsync(MyTaskDto task);
-        void Delete(MyTask task);
+        Task Delete(MyTask task);
     }
 }

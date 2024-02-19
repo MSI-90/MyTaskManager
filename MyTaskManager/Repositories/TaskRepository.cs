@@ -55,12 +55,13 @@ namespace MyTaskManager.Repositories
 
             return task;
         }
-        public void Delete(MyTask task)
+
+        public async Task Delete(MyTask task)
         {
-            var taskId = _context.Tasks
-                   .Include(c => c.Category)
-            .Include(p => p.Priory)
-                   .SingleOrDefault(t => t.Id == task.Id);
+            var taskId = await _context.Tasks
+                .Include(c => c.Category)
+                .Include(p => p.Priory)
+                .SingleOrDefaultAsync(t => t.Id == task.Id);
 
             if (taskId is not null)
             {   
