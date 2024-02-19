@@ -30,14 +30,6 @@ namespace MyTaskManager.Repositories
                 .SingleOrDefaultAsync(t => t.Id == id) ?? new MyTask();
         }
 
-        public async Task<MyTask> AddTaskAsync(MyTask newTask)
-        {
-            await _context.Tasks.AddAsync(newTask);
-            await _context.SaveChangesAsync();
-
-            return newTask;
-        }
-
         public async Task<MyTask> AddTaskAsync(MyTaskDto taskDto)
         {
             taskDto.Id = _context.Tasks.Count();
