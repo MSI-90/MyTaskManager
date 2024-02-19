@@ -9,6 +9,7 @@ namespace MyTaskManager.Repositories.Interfaces
         Task<IEnumerable<MyTask>> GetAllTasksAsync();
         Task<MyTask> GetTaskAsync(int id);
         Task<MyTask> AddTaskAsync(MyTaskDto task);
+        Task TaskUpdate(int oldTaskId, MyTaskDto taskDto);
         Task Delete(MyTask task);
     }
 }

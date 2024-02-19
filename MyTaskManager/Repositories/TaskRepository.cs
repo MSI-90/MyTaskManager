@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using MyTaskManager.Data;
 using MyTaskManager.DTO;
 using MyTaskManager.Repositories.Interfaces;
@@ -39,13 +40,56 @@ namespace MyTaskManager.Repositories
                 TitleTask = taskDto.TitleTask,
                 Expiration = taskDto.Expiration,
                 Category = new Category { Name = taskDto.Category, Description = taskDto.CategoryDescription },
-                Priory = new Priority { Name = taskDto.Priority.ToString() ?? String.Empty }
+                Priory = new Priority { Name = taskDto.Prior.ToString() ?? String.Empty }
             };
 
             await _context.Tasks.AddAsync(task);
             await _context.SaveChangesAsync();
 
             return task;
+        }
+
+        public async Task TaskUpdate(int oldTaskId, MyTaskDto taskDto)
+        {
+            var oldTask = _context.Tasks.Find(oldTaskId);
+
+            if (oldTask.Id == 0)
+                throw new Exception("Don't Found");
+            else
+            {
+                oldTask.TitleTask = taskDto.TitleTask;
+                oldTask.Expiration = taskDto.Expiration;
+                oldTask.Category = new Category
+                {
+                    Id = oldTask.Category.Id,
+                    Name = taskDto.Category,
+                    Description = taskDto.CategoryDescription
+                };
+                oldTask.Priory = new Priority
+                {
+                    Id = oldTask.Priory.Id,
+                    Name = taskDto.Prior.ToString(),
+                };
+
+                //var task = new MyTask
+                //{
+                //    TitleTask = taskDto.TitleTask,
+                //    Expiration = taskDto.Expiration,
+                //    Category = new Category
+                //    {
+                //        Name = taskDto.Category,
+                //        Description = taskDto.CategoryDescription
+                //    },
+                //    Priory = new Priority
+                //    {
+                //        Name = taskDto.Prior.ToString()
+                //    }
+                //};
+
+                //await _context.Tasks.AddAsync(task);
+                await _context.SaveChangesAsync();
+            }
+
         }
 
         public async Task Delete(MyTask task)

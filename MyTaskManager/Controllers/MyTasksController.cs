@@ -39,6 +39,20 @@ namespace MyTaskManager.Controllers
             return CreatedAtAction(nameof(GetTask), new { Id = newTask.Id }, newTask);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTask(int id, [FromBody] MyTaskDto newTask)
+        {
+            var oldTaskId = _repository.GetTaskAsync(id).Result;
+
+            if (oldTaskId.Id > 0)
+            {
+                await _repository.TaskUpdate(oldTaskId.Id, newTask);
+                return NoContent();
+            }
+
+            return NotFound();
+        }
+
         [HttpDelete("{id}")]
         public IActionResult DeleteTask(int id)
         {

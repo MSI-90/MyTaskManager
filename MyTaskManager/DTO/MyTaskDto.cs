@@ -14,13 +14,10 @@ namespace MyTaskManager.DTO
         public string TitleTask { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
         public string CategoryDescription { get; set; } = string.Empty;
-        public myPriority Priority { get; set; }
-
-        [JsonIgnore]
-        public string PriorityDescription { get; set; }
+        public PriorityFrom Prior { get; set; }
         public DateTime Expiration { get; set; }
 
-        public enum myPriority : byte
+        public enum PriorityFrom : byte
         {
             Низкий,
             Нормальный,
