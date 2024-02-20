@@ -49,7 +49,7 @@ namespace MyTaskManager.Repositories
             return task;
         }
 
-        public async Task TaskUpdate(int oldTaskId, MyTaskDto taskDto)
+        public async Task TaskUpdate(int oldTaskId, SmallTaskDTO std)
         {
             var oldTask = _context.Tasks.Find(oldTaskId);
 
@@ -57,19 +57,19 @@ namespace MyTaskManager.Repositories
                 throw new Exception("Don't Found");
             else
             {
-                oldTask.TitleTask = taskDto.TitleTask;
-                oldTask.Expiration = taskDto.Expiration;
-                oldTask.Category = new Category
-                {
-                    Id = oldTask.Category.Id,
-                    Name = taskDto.Category,
-                    Description = taskDto.CategoryDescription
-                };
-                oldTask.Priory = new Priority
-                {
-                    Id = oldTask.Priory.Id,
-                    Name = taskDto.Prior.ToString(),
-                };
+                oldTask.TitleTask = std.Title;
+                oldTask.Expiration = std.Expiration;
+                //oldTask.Category = new Category
+                //{
+                //    Id = oldTask.Category.Id,
+                //    Name = taskDto.Category,
+                //    Description = taskDto.CategoryDescription
+                //};
+                //oldTask.Priory = new Priority
+                //{
+                //    Id = oldTask.Priory.Id,
+                //    Name = taskDto.Prior.ToString(),
+                //};
 
                 //var task = new MyTask
                 //{

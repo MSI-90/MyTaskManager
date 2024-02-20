@@ -40,7 +40,7 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(int id, [FromBody] MyTaskDto newTask)
+        public async Task<IActionResult> UpdateTask(int id, [FromBody] SmallTaskDTO newTask)
         {
             var oldTaskId = _repository.GetTaskAsync(id).Result;
 
