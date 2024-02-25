@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using MyTaskManager.Data;
 using MyTaskManager.DTO;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyTaskManager.Repositories
 {
-    internal class TaskRepository : ITaskRepository
+    public class TaskRepository : ITaskRepository
     {
         private readonly TaskContext _context;
         public TaskRepository(TaskContext context) => _context = context;

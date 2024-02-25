@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
-using MyTaskManager.Data;
+﻿using MyTaskManager.Data;
 using MyTaskManager.DTO;
 
 namespace MyTaskManager.Repositories.Interfaces

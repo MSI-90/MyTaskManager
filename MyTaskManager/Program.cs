@@ -1,7 +1,7 @@
 
+using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using MyTaskManager.Data;
 using MyTaskManager.Repositories;
 using MyTaskManager.Repositories.Interfaces;
 using System.Runtime.CompilerServices;
