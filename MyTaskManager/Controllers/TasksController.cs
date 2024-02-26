@@ -6,12 +6,12 @@ using MyTaskManager.Repositories.Interfaces;
 
 namespace MyTaskManager.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class MyTasksController : ControllerBase
+    public class TasksController : ControllerBase
     {
         readonly ITaskRepository _repository;
-        public MyTasksController(ITaskRepository repository) => _repository = repository;
+        public TasksController(ITaskRepository repository) => _repository = repository;
 
         [HttpGet]
         public async Task<IEnumerable<MyTask>> Get()
@@ -19,7 +19,7 @@ namespace MyTaskManager.Controllers
             return await _repository.GetAllTasksAsync();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:min(1)}")]
         public async Task<ActionResult<MyTask>> GetTask(int id)
         {
             return await _repository.GetTaskAsync(id);
@@ -33,7 +33,7 @@ namespace MyTaskManager.Controllers
             return CreatedAtAction(nameof(GetTask), new { Id = newTask.Id }, newTask);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:min(1)}")]
         public async Task<IActionResult> UpdateTask(int id, [FromBody] SmallTaskDTO newTask)
         {
             var oldTaskId = _repository.GetTaskAsync(id).Result;
@@ -47,7 +47,7 @@ namespace MyTaskManager.Controllers
             return NotFound();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:min(1)}")]
         public IActionResult DeleteTask(int id)
         {
             var task = _repository.GetTaskAsync(id).Result;
