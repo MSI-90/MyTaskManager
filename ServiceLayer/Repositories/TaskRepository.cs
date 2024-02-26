@@ -4,6 +4,7 @@ using MyTaskManager.Data;
 using MyTaskManager.DTO;
 using MyTaskManager.Repositories.Interfaces;
 using System.Threading.Tasks;
+using static MyTaskManager.DTO.MyTaskDto;
 
 namespace MyTaskManager.Repositories
 {
@@ -20,15 +21,25 @@ namespace MyTaskManager.Repositories
                 .ToListAsync();
         }
 
-        public async Task<MyTask> GetTaskAsync(int id)
+        public async Task<MyTaskDto> GetTaskAsync(int id)
         {
             if (id <= 0)
-                return new MyTask();
+                return new MyTaskDto();
 
-                return await _context.Tasks
-                .Include(c => c.Category)
-                .Include(p => p.Priory)
-                .SingleOrDefaultAsync(t => t.Id == id) ?? new MyTask();
+            var model = await _context.Tasks
+            .Include(c => c.Category)
+            .Include(p => p.Priory)
+            .SingleOrDefaultAsync(t => t.Id == id) ?? new MyTask();
+
+            return new MyTaskDto
+            {
+                Id = model.Id,
+                TitleTask = model.TitleTask,
+                Category = model.Category.Name,
+                PriorityString = model.Priory.Name,
+                Expiration = model.Expiration
+            };
+
         }
 
         public async Task<MyTask> AddTaskAsync(MyTaskDto taskDto)

@@ -15,6 +15,7 @@ namespace MyTaskManager.DTO
         public string Category { get; set; } = string.Empty;
         public string CategoryDescription { get; set; } = string.Empty;
         public PriorityFrom Prior { get; set; }
+        public string PriorityString {  get; set; }
         public DateTime Expiration { get; set; }
 
         public enum PriorityFrom : byte

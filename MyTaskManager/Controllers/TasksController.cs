@@ -20,7 +20,7 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpGet("{id:min(1)}")]
-        public async Task<ActionResult<MyTask>> GetTask(int id)
+        public async Task<ActionResult<MyTaskDto>> GetTask(int id)
         {
             return await _repository.GetTaskAsync(id);
         }
