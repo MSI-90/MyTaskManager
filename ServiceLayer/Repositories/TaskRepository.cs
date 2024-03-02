@@ -70,40 +70,13 @@ namespace MyTaskManager.Repositories
             {
                 oldTask.TitleTask = std.Title;
                 oldTask.Expiration = std.Expiration;
-                //oldTask.Category = new Category
-                //{
-                //    Id = oldTask.Category.Id,
-                //    Name = taskDto.Category,
-                //    Description = taskDto.CategoryDescription
-                //};
-                //oldTask.Priory = new Priority
-                //{
-                //    Id = oldTask.Priory.Id,
-                //    Name = taskDto.Prior.ToString(),
-                //};
-
-                //var task = new MyTask
-                //{
-                //    TitleTask = taskDto.TitleTask,
-                //    Expiration = taskDto.Expiration,
-                //    Category = new Category
-                //    {
-                //        Name = taskDto.Category,
-                //        Description = taskDto.CategoryDescription
-                //    },
-                //    Priory = new Priority
-                //    {
-                //        Name = taskDto.Prior.ToString()
-                //    }
-                //};
-
-                //await _context.Tasks.AddAsync(task);
+                
                 await _context.SaveChangesAsync();
             }
 
         }
 
-        public async Task Delete(MyTask task)
+        public async Task Delete(MyTaskDto task)
         {
             var taskId = await _context.Tasks
                 .Include(c => c.Category)

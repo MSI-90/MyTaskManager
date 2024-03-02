@@ -47,7 +47,7 @@ namespace MyTaskManager.Controllers
             return NotFound();
         }
 
-        [HttpDelete("{id:min(1)}")]
+        [HttpDelete("{id:min(1}")]
         public IActionResult DeleteTask(int id)
         {
             var task = _repository.GetTaskAsync(id).Result;

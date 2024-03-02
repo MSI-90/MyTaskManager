@@ -27,7 +27,6 @@ namespace MyTaskManager
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-
             var connectionString = configuration.GetConnectionString("defaultConnection");
             builder.Services.AddDbContext<TaskContext>(
                 options => options.UseNpgsql(connectionString));
@@ -42,8 +41,6 @@ namespace MyTaskManager
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
-            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
