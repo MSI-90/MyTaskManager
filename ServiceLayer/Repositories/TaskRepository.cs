@@ -31,6 +31,9 @@ namespace MyTaskManager.Repositories
             .Include(p => p.Priory)
             .SingleOrDefaultAsync(t => t.Id == id) ?? new MyTask();
 
+            if (model.Id == default)
+                return new MyTaskDto();
+
             return new MyTaskDto
             {
                 Id = model.Id,
@@ -39,7 +42,6 @@ namespace MyTaskManager.Repositories
                 PriorityString = model.Priory.Name,
                 Expiration = model.Expiration
             };
-
         }
 
         public async Task<MyTask> AddTaskAsync(MyTaskDto taskDto)
