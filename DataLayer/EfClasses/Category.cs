@@ -12,8 +12,6 @@ namespace MyTaskManager.Data
 
         [MaxLength(150)]
         public string Description { get; set; } = String.Empty;
-
-        [JsonIgnore]
         public ICollection<MyTask>? Tasks { get; set; }
     }
 }

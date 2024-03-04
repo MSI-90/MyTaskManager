@@ -9,8 +9,6 @@ namespace MyTaskManager.Data
 
         [MaxLength(30)]
         public string Name { get; set; } = String.Empty;
-
-        [JsonIgnore]
         public ICollection<MyTask>? Tasks { get; set; }
     }
 }

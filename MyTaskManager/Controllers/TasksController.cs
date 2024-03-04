@@ -36,7 +36,7 @@ namespace MyTaskManager.Controllers
         [HttpPut("{id:min(1)}")]
         public async Task<IActionResult> UpdateTask(int id, [FromBody] SmallTaskDTO newTask)
         {
-            var oldTaskId = _repository.GetTaskAsync(id).Result;
+            var oldTaskId = await _repository.GetTaskAsync(id);
 
             if (oldTaskId.Id > 0)
             {
@@ -48,13 +48,13 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpDelete("{id:min(1)}")]
-        public IActionResult DeleteTask(int id)
+        public async Task<IActionResult> DeleteTask(int id)
         {
-            var task = _repository.GetTaskAsync(id).Result;
+            var task = await _repository.GetTaskAsync(id);
 
             if (task.Id > 0)
             {
-                _repository.Delete(task);
+                await _repository.Delete(task);
                 return Ok();
             }
             

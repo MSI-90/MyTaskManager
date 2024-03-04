@@ -22,8 +22,6 @@ namespace MyTaskManager.Data
         [Required]
         [MaxLength(20)]
         public string Password { get; set; } = String.Empty;
-
-        [JsonIgnore]
         public ICollection<MyTask>? Tasks { get; set; }
     }
 }
