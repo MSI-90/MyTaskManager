@@ -13,12 +13,24 @@ namespace MyTaskManager.Repositories
         private readonly TaskContext _context;
         public TaskRepository(TaskContext context) => _context = context;
 
-        public async Task<IEnumerable<MyTask>> GetAllTasksAsync()
+        public async Task<IEnumerable<MyTaskDto>> GetAllTasksAsync()
         {
-            return await _context.Tasks
+            var modelFromEntity =  await _context.Tasks
                 .Include(c => c.Category)
                 .Include(p => p.Priory)
                 .ToListAsync();
+
+            var taskDto = modelFromEntity.Select(task => new MyTaskDto
+            {
+                Id = task.Id,
+                TitleTask = task.TitleTask,
+                Category = task.Category.Name,
+                CategoryDescription = task.Category.Description,
+                PriorityString = task.Priory.Name,
+                Expiration = task.Expiration
+            });
+
+            return taskDto.OrderBy(task => task.Id);
         }
 
         public async Task<MyTaskDto> GetTaskAsync(int id)

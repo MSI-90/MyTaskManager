@@ -7,7 +7,6 @@ namespace MyTaskManager.DTO
 {
     public class MyTaskDto
     {
-        [JsonIgnore]
         public int Id { get; set; }
 
         [MaxLength(50)]

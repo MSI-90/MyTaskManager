@@ -14,7 +14,7 @@ namespace MyTaskManager.Controllers
         public TasksController(ITaskRepository repository) => _repository = repository;
 
         [HttpGet]
-        public async Task<IEnumerable<MyTask>> Get()
+        public async Task<IEnumerable<MyTaskDto>> Get()
         {
             return await _repository.GetAllTasksAsync();
         }
