@@ -1,5 +1,5 @@
-﻿using MyTaskManager.Data;
-using System.Collections.Generic;
+﻿using DataLayer.DTO;
+using ServiceLayer.Services;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -13,37 +13,17 @@ namespace MyTaskManager.DTO
         public string TitleTask { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
         public string CategoryDescription { get; set; } = string.Empty;
+
+        [JsonIgnore]
         public PriorityFrom Prior { get; set; }
-        public string PriorityString {  get; set; }
-        public DateTime Expiration { get; set; }
-
-        public enum PriorityFrom : byte
-        {
-            Низкий,
-            Нормальный,
-            Высокий
+        public string PriorityString {  
+            get {  return Prior.ToString(); }
+            set { Prior = (PriorityFrom)Enum.Parse(typeof(PriorityFrom), value); }
         }
-
-        //public MyTaskDto()
-        //{
-        //    PriorityDescription = GetDescription((int)Priority);
-        //}
-
-        //private string GetDescription(int id)
-        //{
-        //    string[] descriptionVariants =
-        //        [
-        //            "обычно относится к задачам или действиям, которые имеют низкую степень важности или срочности. " +
-        //            "Это могут быть задачи, которые могут быть выполнены во второстепенном порядке или отложены в пользу более важных задач.",
-
-        //            "обычно относится к задачам или действиям, которые имеют среднюю степень важности или срочности. " +
-        //            "Это могут быть задачи, которые требуют выполнения в разумные сроки, но не являются критически важными.",
-
-        //            "обычно относится к задачам или действиям, которые имеют высокую степень важности или срочности. " +
-        //            "Это могут быть критически важные задачи, которые требуют немедленного внимания и выполнения."
-        //        ];
-
-        //    return descriptionVariants[id];
-        //}
+        public DateTime Expiration { get; set; } = DateTime.Now;
+        public string PriorityDescription
+        { 
+            get { return new TaskService().GetPriorityDescription(Prior); } 
+        }
     }
 }

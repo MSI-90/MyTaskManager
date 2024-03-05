@@ -1,10 +1,10 @@
-﻿using DataLayer.EfCode;
+﻿using DataLayer.DTO;
+using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 using MyTaskManager.Data;
 using MyTaskManager.DTO;
 using MyTaskManager.Repositories.Interfaces;
-using System.Threading.Tasks;
-using static MyTaskManager.DTO.MyTaskDto;
+using ServiceLayer.Services;
 
 namespace MyTaskManager.Repositories
 {
@@ -18,7 +18,7 @@ namespace MyTaskManager.Repositories
             var modelFromEntity =  await _context.Tasks
                 .Include(c => c.Category)
                 .Include(p => p.Priory)
-                .ToListAsync();
+                .ToListAsync(); 
 
             var taskDto = modelFromEntity.Select(task => new MyTaskDto
             {
@@ -59,13 +59,14 @@ namespace MyTaskManager.Repositories
         public async Task<MyTask> AddTaskAsync(MyTaskDto taskDto)
         {
             taskDto.Id = _context.Tasks.Count();
+            taskDto.Expiration = DateTime.Now;
 
             var task = new MyTask
             {
                 TitleTask = taskDto.TitleTask,
                 Expiration = taskDto.Expiration,
-                Category = new Category { Name = taskDto.Category, Description = taskDto.CategoryDescription },
-                Priory = new Priority { Name = taskDto.Prior.ToString() ?? String.Empty }
+                Category = new Category { Name = taskDto.Category ?? string.Empty, Description = taskDto.CategoryDescription ?? string.Empty },
+                Priory = new Priority { Name = taskDto.Prior.ToString() ?? string.Empty }
             };
 
             await _context.Tasks.AddAsync(task);
