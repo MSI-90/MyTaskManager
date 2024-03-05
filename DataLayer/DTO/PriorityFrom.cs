@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace DataLayer.DTO
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum PriorityFrom : byte
     {
         Низкий,

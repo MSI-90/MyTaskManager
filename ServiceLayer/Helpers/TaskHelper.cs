@@ -1,18 +1,9 @@
 ﻿using DataLayer.DTO;
-using MyTaskManager.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ServiceLayer.Helpers
 {
     public class TaskHelper
     {
-        //PriorityFrom priority;
         private string DescriptionVariants(byte id)
         {
             string[] descriptionVariants =
@@ -34,5 +25,11 @@ namespace ServiceLayer.Helpers
         {
             return DescriptionVariants((byte)priority);
         }
+        
+        //public string PriorityString
+        //{
+        //    get { return Prior.ToString(); }
+        //    set { Prior = (PriorityFrom)Enum.Parse(typeof(PriorityFrom), value); }
+        //}
     }
 }

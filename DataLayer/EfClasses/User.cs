@@ -21,6 +21,7 @@ namespace MyTaskManager.Data
 
         [Required]
         [MaxLength(20)]
+        [DataType(DataType.Password)]
         public string Password { get; set; } = String.Empty;
         public ICollection<MyTask>? Tasks { get; set; }
     }

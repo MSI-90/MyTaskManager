@@ -10,20 +10,19 @@ namespace MyTaskManager.DTO
         public int Id { get; set; }
 
         [MaxLength(50)]
+        [Required]
         public string TitleTask { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
         public string CategoryDescription { get; set; } = string.Empty;
 
-        [JsonIgnore]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public PriorityFrom Prior { get; set; }
-        public string PriorityString {  
-            get {  return Prior.ToString(); }
-            set { Prior = (PriorityFrom)Enum.Parse(typeof(PriorityFrom), value); }
-        }
         public DateTime Expiration { get; set; } = DateTime.Now;
+
+        [JsonIgnore]
         public string PriorityDescription
         { 
-            get { return new TaskService().GetPriorityDescription(Prior); } 
+            get { return new TaskService().GetPriorityDescription(Prior); }
         }
     }
 }

@@ -26,7 +26,7 @@ namespace MyTaskManager.Repositories
                 TitleTask = task.TitleTask,
                 Category = task.Category.Name,
                 CategoryDescription = task.Category.Description,
-                PriorityString = task.Priory.Name,
+                Prior = (PriorityFrom)Enum.Parse(typeof(PriorityFrom), task.Priory.Name),
                 Expiration = task.Expiration
             });
 
@@ -51,28 +51,25 @@ namespace MyTaskManager.Repositories
                 Id = model.Id,
                 TitleTask = model.TitleTask,
                 Category = model.Category.Name,
-                PriorityString = model.Priory.Name,
+                Prior = (PriorityFrom)Enum.Parse(typeof(PriorityFrom), model.Priory.Name),
                 Expiration = model.Expiration
             };
         }
 
-        public async Task<MyTask> AddTaskAsync(MyTaskDto taskDto)
+        public async Task AddTaskAsync(MyTaskDto taskDto)
         {
             taskDto.Id = _context.Tasks.Count();
-            taskDto.Expiration = DateTime.Now;
 
             var task = new MyTask
             {
                 TitleTask = taskDto.TitleTask,
                 Expiration = taskDto.Expiration,
                 Category = new Category { Name = taskDto.Category ?? string.Empty, Description = taskDto.CategoryDescription ?? string.Empty },
-                Priory = new Priority { Name = taskDto.Prior.ToString() ?? string.Empty }
+                Priory = new Priority { Name = taskDto.Prior.ToString() }
             };
 
             await _context.Tasks.AddAsync(task);
             await _context.SaveChangesAsync();
-
-            return task;
         }
 
         public async Task TaskUpdate(int oldTaskId, SmallTaskDTO std)

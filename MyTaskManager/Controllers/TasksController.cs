@@ -26,7 +26,7 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<MyTask>> AddTask([FromForm] MyTaskDto newTask)
+        public async Task<ActionResult> AddTask([FromForm] MyTaskDto newTask)
         {
             await _repository.AddTaskAsync(newTask);
 
