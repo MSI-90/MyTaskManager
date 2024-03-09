@@ -1,12 +1,6 @@
-
-using DataLayer.EfCode;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using MyTaskManager.EfCode;
 using MyTaskManager.Repositories;
 using MyTaskManager.Repositories.Interfaces;
-using ServiceLayer.Services;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 
 namespace MyTaskManager
 {
@@ -16,10 +10,10 @@ namespace MyTaskManager
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
+            //var configuration = new ConfigurationBuilder()
+            //.SetBasePath(Directory.GetCurrentDirectory())
+            //.AddJsonFile("appsettings.json")
+            //.Build();
 
             // Add services to the container.
             builder.Services.AddControllers();
@@ -27,14 +21,18 @@ namespace MyTaskManager
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAuthentication();
 
-            var connectionString = configuration.GetConnectionString("defaultConnection");
-            builder.Services.AddDbContext<TaskContext>(
-                options => options.UseNpgsql(connectionString));
+
+            //EF_Core
+            builder.Services.AddDbContext<TaskContext>();
+
 
             builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
             var app = builder.Build();
+
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -43,6 +41,8 @@ namespace MyTaskManager
                 app.UseSwaggerUI();
             }
 
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE0025: Использовать тело выражения для свойства
+dotnet_diagnostic.IDE0025.severity = none

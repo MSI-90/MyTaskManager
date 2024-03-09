@@ -1,9 +1,8 @@
-﻿using DataLayer.DTO;
-using ServiceLayer.Services;
+﻿using Helpers;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace MyTaskManager.DTO
+namespace Models.DTO
 {
     public class MyTaskDto
     {
@@ -22,7 +21,7 @@ namespace MyTaskManager.DTO
         [JsonIgnore]
         public string PriorityDescription
         { 
-            get { return new TaskService().GetPriorityDescription(Prior); }
+            get { return new TaskHelper().GetPriorityDescription(Prior); }
         }
     }
 }

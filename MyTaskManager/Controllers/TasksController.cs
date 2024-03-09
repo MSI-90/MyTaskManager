@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyTaskManager.Data;
-using MyTaskManager.DTO;
+using Models.DTO;
 using MyTaskManager.Repositories.Interfaces;
 
 
@@ -34,7 +33,7 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpPut("{id:min(1)}")]
-        public async Task<IActionResult> UpdateTask(int id, [FromBody] SmallTaskDTO newTask)
+        public async Task<IActionResult> UpdateTask([FromBody] SmallTaskDTO newTask, int id)
         {
             var oldTaskId = await _repository.GetTaskAsync(id);
 

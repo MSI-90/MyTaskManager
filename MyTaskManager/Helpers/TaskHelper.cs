@@ -1,6 +1,6 @@
-﻿using DataLayer.DTO;
+﻿using Models.DTO;
 
-namespace ServiceLayer.Helpers
+namespace Helpers
 {
     public class TaskHelper
     {
@@ -25,11 +25,5 @@ namespace ServiceLayer.Helpers
         {
             return DescriptionVariants((byte)priority);
         }
-        
-        //public string PriorityString
-        //{
-        //    get { return Prior.ToString(); }
-        //    set { Prior = (PriorityFrom)Enum.Parse(typeof(PriorityFrom), value); }
-        //}
     }
 }

@@ -1,5 +1,4 @@
-﻿using MyTaskManager.Data;
-using MyTaskManager.DTO;
+﻿using Models.DTO;
 
 namespace MyTaskManager.Repositories.Interfaces
 {

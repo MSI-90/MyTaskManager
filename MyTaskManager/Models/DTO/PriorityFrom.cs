@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DataLayer.DTO
+namespace Models.DTO
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum PriorityFrom : byte

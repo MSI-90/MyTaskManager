@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
-namespace MyTaskManager.Data
+namespace Models.EfClasses
 {
     public class Priority
     {

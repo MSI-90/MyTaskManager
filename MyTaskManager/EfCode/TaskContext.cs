@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using MyTaskManager.Data;
+﻿using Models.EfClasses;
+using Microsoft.EntityFrameworkCore;
 
-namespace DataLayer.EfCode
+
+namespace MyTaskManager.EfCode
 {
     public class TaskContext : DbContext
     {

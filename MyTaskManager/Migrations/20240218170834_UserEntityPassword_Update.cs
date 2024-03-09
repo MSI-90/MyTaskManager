@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace MyTaskManager.Migrations
+namespace DataLayer.Migrations
 {
     /// <inheritdoc />
     public partial class UserEntityPassword_Update : Migration

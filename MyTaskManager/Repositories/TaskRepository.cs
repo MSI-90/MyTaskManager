@@ -1,10 +1,10 @@
-﻿using DataLayer.DTO;
-using DataLayer.EfCode;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using MyTaskManager.Data;
-using MyTaskManager.DTO;
+using Models.DTO;
+using Models.EfClasses;
+using MyTaskManager.EfCode;
 using MyTaskManager.Repositories.Interfaces;
-using ServiceLayer.Services;
+using System.Reflection.Metadata.Ecma335;
 
 namespace MyTaskManager.Repositories
 {
@@ -18,7 +18,10 @@ namespace MyTaskManager.Repositories
             var modelFromEntity =  await _context.Tasks
                 .Include(c => c.Category)
                 .Include(p => p.Priory)
-                .ToListAsync(); 
+                .ToListAsync() ?? new List<MyTask>(); 
+
+            if (modelFromEntity.Count == 0)
+                return Enumerable.Empty<MyTaskDto>();
 
             var taskDto = modelFromEntity.Select(task => new MyTaskDto
             {
