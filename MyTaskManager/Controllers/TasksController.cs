@@ -15,6 +15,8 @@ namespace MyTaskManager.Controllers
         public TasksController(ITaskRepository repository) => _repository = repository;
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IEnumerable<MyTaskDto>> Get()
         {
             return await _repository.GetAllTasksAsync();
@@ -23,7 +25,11 @@ namespace MyTaskManager.Controllers
         [HttpGet("{id:min(1)}")]
         public async Task<ActionResult<MyTaskDto>> GetTask(int id)
         {
-            return await _repository.GetTaskAsync(id);
+            var taskById = await _repository.GetTaskAsync(id);
+            if (taskById.Id == 0)
+                return BadRequest();
+
+            return Ok(taskById);
         }
 
         [HttpPost]

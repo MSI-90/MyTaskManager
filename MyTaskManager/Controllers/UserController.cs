@@ -4,7 +4,6 @@ using MyTaskManager.Models;
 using MyTaskManager.Repositories.Interfaces;
 using MyTaskManager.Models.DTO.UserDTO.AuthDTO;
 using MyTaskManager.Models.DTO.UserDTO.RegistrationDTO;
-using System.Diagnostics;
 
 namespace MyTaskManager.Controllers
 {
