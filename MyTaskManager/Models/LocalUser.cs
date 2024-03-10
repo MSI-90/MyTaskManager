@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyTaskManager.Models.DTO.UserDTO.RegistrationDTO
+namespace MyTaskManager.Models
 {
-    public class RegisterationRequestDTO
+    public class LocalUser
     {
+        public int Id { get; set; }
+
         [Required]
         [MaxLength(20)]
         public string UserName { get; set; } = string.Empty;
@@ -27,11 +28,7 @@ namespace MyTaskManager.Models.DTO.UserDTO.RegistrationDTO
         public string Password { get; set; } = string.Empty;
 
         [Required]
-        [Compare(nameof(Password))]
-        public string RequirePassword { get; set; } = string.Empty;
-
-        //[HiddenInput]
-        //[MaxLength(0)]
-        //public string Role { get; set; } = string.Empty;
+        [MaxLength(20)]
+        public string Role { get; set; } = string.Empty;
     }
 }

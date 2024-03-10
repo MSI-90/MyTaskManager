@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyTaskManager.Models.DTO.TaskDTO;
 using MyTaskManager.Repositories.Interfaces;
 
 
 namespace MyTaskManager.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
@@ -46,6 +48,7 @@ namespace MyTaskManager.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:min(1)}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
@@ -56,7 +59,7 @@ namespace MyTaskManager.Controllers
                 await _repository.Delete(task);
                 return Ok();
             }
-            
+
             return NotFound();
         }
     }

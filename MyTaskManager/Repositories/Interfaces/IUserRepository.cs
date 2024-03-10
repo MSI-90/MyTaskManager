@@ -1,6 +1,7 @@
-﻿using Models.EfClasses;
-using MyTaskManager.Models.DTO.User.AuthDTO;
-using MyTaskManager.Models.DTO.User.RegistrationDTO;
+﻿using MyTaskManager.Models;
+using MyTaskManager.Models.DTO.UserDTO.AuthDTO;
+using MyTaskManager.Models.DTO.UserDTO.RegistrationDTO;
+using MyTaskManager.Models.UserDTO.AuthDTO;
 
 namespace MyTaskManager.Repositories.Interfaces
 {
@@ -8,6 +9,6 @@ namespace MyTaskManager.Repositories.Interfaces
     {
         bool IsUniqueUser(string username);
         Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);
-        Task<User> Register(RegisterationRequestDTO registerationRequestDTO);
+        Task<LocalUser> Register(RegisterationRequestDTO registerationRequestDTO);
     }
 }

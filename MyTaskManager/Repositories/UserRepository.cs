@@ -1,9 +1,11 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Models.EfClasses;
 using MyTaskManager.EfCode;
-using MyTaskManager.Models.DTO.User.AuthDTO;
-using MyTaskManager.Models.DTO.User.RegistrationDTO;
+using MyTaskManager.Models;
 using MyTaskManager.Models.DTO.UserDTO;
+using MyTaskManager.Models.DTO.UserDTO.AuthDTO;
+using MyTaskManager.Models.DTO.UserDTO.RegistrationDTO;
+using MyTaskManager.Models.UserDTO.AuthDTO;
 using MyTaskManager.Repositories.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -35,7 +37,22 @@ namespace MyTaskManager.Repositories
             u.Password == loginRequestDTO.Password);
 
             if (user == null)
-                return null;
+                return new LoginResponseDTO
+                {
+                    Token = "",
+                    User = null
+                };
+
+            LocalUser localUserDTO = new()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Password = user.Password,
+                Role = user.Role,
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
 
@@ -43,11 +60,10 @@ namespace MyTaskManager.Repositories
             {
                 new (JwtRegisteredClaimNames.Sub, user.UserName),
                 new (JwtRegisteredClaimNames.Email, user.Email),
-                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new (ClaimTypes.Role, user.Role)
             };
-
-            authJwtClaims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-            authJwtClaims.Add(new Claim(ClaimTypes.Role, user.Role));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -59,17 +75,27 @@ namespace MyTaskManager.Repositories
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
+            LoginResponseDTO loginResponseDTO = new()
             {
                 Token = tokenHandler.WriteToken(token),
-                User = user
+                User = localUserDTO
             };
 
             return loginResponseDTO;
         }
 
-        public async Task<User> Register(RegisterationRequestDTO registerationRequestDTO)
+        public async Task<LocalUser> Register(RegisterationRequestDTO registerationRequestDTO)
         {
+            LocalUser localUser = new()
+            {
+                UserName = registerationRequestDTO.UserName,
+                LastName = registerationRequestDTO.LastName,
+                FirstName = registerationRequestDTO.FirstName,
+                Email = registerationRequestDTO.Email,
+                Password = registerationRequestDTO.Password,
+                Role = UserRoles.User.ToString()
+            };
+
             User user = new()
             {
                 UserName = registerationRequestDTO.UserName,
@@ -83,8 +109,8 @@ namespace MyTaskManager.Repositories
             _taskContext.Users.Add(user);
             await _taskContext.SaveChangesAsync();
 
-            user.Password = "";
-            return user;
+            localUser.Password = "";
+            return localUser;
         }
     }
 }

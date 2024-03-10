@@ -28,6 +28,7 @@ namespace MyTaskManager
             builder.Services.AddDbContext<TaskContext>();
 
             builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             var app = builder.Build();
 
@@ -40,6 +41,7 @@ namespace MyTaskManager
                 app.UseSwaggerUI();
             }
 
+            app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();

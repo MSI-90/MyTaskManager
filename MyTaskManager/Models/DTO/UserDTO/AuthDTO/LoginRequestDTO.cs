@@ -1,4 +1,4 @@
-﻿namespace MyTaskManager.Models.DTO.User.AuthDTO
+﻿namespace MyTaskManager.Models.DTO.UserDTO.AuthDTO
 {
     public class LoginRequestDTO
     {

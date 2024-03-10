@@ -1,10 +1,10 @@
 ﻿using Models.EfClasses;
 
-namespace MyTaskManager.Models.DTO.User.AuthDTO
+namespace MyTaskManager.Models.UserDTO.AuthDTO
 {
     public class LoginResponseDTO
     {
-        public User User { get; set; }
+        public LocalUser User { get; set; }
         public string Token { get; set; } = string.Empty;
     }
 }
