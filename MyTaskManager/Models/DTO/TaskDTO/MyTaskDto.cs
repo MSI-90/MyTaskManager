@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Models.DTO
+namespace MyTaskManager.Models.DTO.TaskDTO
 {
     public class MyTaskDto
     {
@@ -20,7 +20,7 @@ namespace Models.DTO
 
         [JsonIgnore]
         public string PriorityDescription
-        { 
+        {
             get { return new TaskHelper().GetPriorityDescription(Prior); }
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace Models.DTO
+﻿namespace MyTaskManager.Models.DTO.TaskDTO
 {
     public class SmallTaskDTO
     {

@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Models.DTO;
+using MyTaskManager.Models.DTO.TaskDTO;
 using MyTaskManager.Repositories.Interfaces;
 
 
 namespace MyTaskManager.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class TasksController : ControllerBase
     {
         readonly ITaskRepository _repository;

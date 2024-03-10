@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Models.DTO;
 using Models.EfClasses;
 using MyTaskManager.EfCode;
+using MyTaskManager.Models.DTO.TaskDTO;
 using MyTaskManager.Repositories.Interfaces;
 using System.Reflection.Metadata.Ecma335;
 
@@ -18,7 +18,7 @@ namespace MyTaskManager.Repositories
             var modelFromEntity =  await _context.Tasks
                 .Include(c => c.Category)
                 .Include(p => p.Priory)
-                .ToListAsync() ?? new List<MyTask>(); 
+                .ToListAsync() ?? throw new Exception(); 
 
             if (modelFromEntity.Count == 0)
                 return Enumerable.Empty<MyTaskDto>();
@@ -44,7 +44,7 @@ namespace MyTaskManager.Repositories
             var model = await _context.Tasks
             .Include(c => c.Category)
             .Include(p => p.Priory)
-            .SingleOrDefaultAsync(t => t.Id == id) ?? new MyTask();
+            .FirstOrDefaultAsync(t => t.Id == id) ?? new MyTask(); //throw new Exception();
 
             if (model.Id == default)
                 return new MyTaskDto();

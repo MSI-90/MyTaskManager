@@ -21,12 +21,11 @@ namespace MyTaskManager
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddAuthentication();
 
+            builder.Services.AddAuthentication();
 
             //EF_Core
             builder.Services.AddDbContext<TaskContext>();
-
 
             builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
@@ -44,7 +43,6 @@ namespace MyTaskManager
 
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Models.DTO
+namespace MyTaskManager.Models.DTO.TaskDTO
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum PriorityFrom : byte

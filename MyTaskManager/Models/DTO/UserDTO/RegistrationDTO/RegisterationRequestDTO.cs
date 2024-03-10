@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
-namespace Models.EfClasses
+namespace MyTaskManager.Models.DTO.User.RegistrationDTO
 {
-    public class User
+    public class RegisterationRequestDTO
     {
-        public int Id { get; set; }
-
         [Required]
         [MaxLength(20)]
         public string UserName { get; set; } = string.Empty;
@@ -28,8 +27,11 @@ namespace Models.EfClasses
         public string Password { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(20)]
-        public string Role { get; set; } = string.Empty;
-        public ICollection<MyTask>? Tasks { get; set; }
+        [Compare(nameof(Password))]
+        public string RequirePassword { get; set; } = string.Empty;
+
+        //[HiddenInput]
+        //[MaxLength(0)]
+        //public string Role { get; set; } = string.Empty;
     }
 }

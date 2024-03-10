@@ -7,10 +7,10 @@ namespace Models.EfClasses
         public int Id { get; set; }
 
         [MaxLength(50)]
-        public string Name { get; set; } = String.Empty;
+        public string Name { get; set; } = string.Empty;
 
         [MaxLength(150)]
-        public string Description { get; set; } = String.Empty;
+        public string Description { get; set; } = string.Empty;
         public ICollection<MyTask>? Tasks { get; set; }
     }
 }
