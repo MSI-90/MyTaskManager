@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Models.EfClasses;
 using MyTaskManager.EfCode;
+using MyTaskManager.Infrastructure.Interfaces;
 using MyTaskManager.Models;
 using MyTaskManager.Models.DTO.UserDTO;
 using MyTaskManager.Models.DTO.UserDTO.AuthDTO;
@@ -16,6 +17,7 @@ namespace MyTaskManager.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly TaskContext _taskContext;
+        private readonly IPasswordHasher _passwordHasher;
         private readonly string _secretKey = "";
         public UserRepository(TaskContext taskContext, IConfiguration configuration)
         {
@@ -92,17 +94,17 @@ namespace MyTaskManager.Repositories
                 LastName = registerationRequestDTO.LastName,
                 FirstName = registerationRequestDTO.FirstName,
                 Email = registerationRequestDTO.Email,
-                Password = registerationRequestDTO.Password,
+                Password = _passwordHasher.Generate(registerationRequestDTO.Password),
                 Role = UserRoles.User.ToString()
             };
 
             User user = new()
             {
-                UserName = registerationRequestDTO.UserName,
-                LastName = registerationRequestDTO.LastName,
-                FirstName = registerationRequestDTO.FirstName,
-                Email = registerationRequestDTO.Email,
-                Password = registerationRequestDTO.Password,
+                UserName = localUser.UserName,
+                LastName = localUser.LastName,
+                FirstName = localUser.FirstName,
+                Email = localUser.Email,
+                Password = localUser.Password,
                 Role = UserRoles.User.ToString()
             };
 

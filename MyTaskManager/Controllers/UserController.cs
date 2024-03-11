@@ -38,7 +38,7 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterationRequestDTO model)
+        public async Task<IActionResult> Register([FromForm] RegisterationRequestDTO model)
         {
             bool ifUserNameUnique = _userRepo.IsUniqueUser(model.UserName);
             if (ifUserNameUnique)
