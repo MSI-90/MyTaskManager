@@ -22,12 +22,13 @@ namespace MyTaskManager.Models.DTO.UserDTO.RegistrationDTO
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(20)]
+        [MaxLength(50)]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 
         [Required]
         [Compare(nameof(Password))]
+        [DataType(DataType.Password)]
         public string RequirePassword { get; set; } = string.Empty;
 
         //[HiddenInput]

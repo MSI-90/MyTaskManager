@@ -1,7 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Models.EfClasses;
 using MyTaskManager.EfCode;
-using MyTaskManager.Infrastructure.Interfaces;
+using MyTaskManager.Infrastructure;
 using MyTaskManager.Models;
 using MyTaskManager.Models.DTO.UserDTO;
 using MyTaskManager.Models.DTO.UserDTO.AuthDTO;
@@ -17,26 +17,29 @@ namespace MyTaskManager.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly TaskContext _taskContext;
-        private readonly IPasswordHasher _passwordHasher;
         private readonly string _secretKey = "";
+        PasswordHasher passwordHasher;
         public UserRepository(TaskContext taskContext, IConfiguration configuration)
         {
             _taskContext = taskContext;
-            _secretKey = configuration.GetValue<string>("JWT:Secret", _secretKey);
+            _secretKey = configuration.GetValue<string>("JWT:Secret", _secretKey) ?? _secretKey;
         }
         public bool IsUniqueUser(string username)
         {
             var user = _taskContext.Users.FirstOrDefault(u => u.UserName == username);
-            if (user == null)
+            if (user != null)
+            {
                 return true;
-
+            }
             return false;
         }
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
-            var user = _taskContext.Users.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower() &&
-            u.Password == loginRequestDTO.Password);
+            passwordHasher = new PasswordHasher();
+
+            var user = _taskContext.Users.AsEnumerable().FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower() &&
+            passwordHasher.Verify(loginRequestDTO.Password, u.Password));
 
             if (user == null)
                 return new LoginResponseDTO
@@ -88,13 +91,15 @@ namespace MyTaskManager.Repositories
 
         public async Task<LocalUser> Register(RegisterationRequestDTO registerationRequestDTO)
         {
+
+            var passwordHasher = new PasswordHasher();
             LocalUser localUser = new()
             {
                 UserName = registerationRequestDTO.UserName,
                 LastName = registerationRequestDTO.LastName,
                 FirstName = registerationRequestDTO.FirstName,
                 Email = registerationRequestDTO.Email,
-                Password = _passwordHasher.Generate(registerationRequestDTO.Password),
+                Password = passwordHasher.Generate(registerationRequestDTO.Password),
                 Role = UserRoles.User.ToString()
             };
 
