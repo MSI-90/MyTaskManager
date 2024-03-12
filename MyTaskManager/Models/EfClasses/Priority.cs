@@ -8,6 +8,6 @@ namespace Models.EfClasses
 
         [MaxLength(30)]
         public string Name { get; set; } = string.Empty;
-        public ICollection<MyTask>? Tasks { get; set; }
+        public ICollection<MyTask> Tasks { get; set; }
     }
 }

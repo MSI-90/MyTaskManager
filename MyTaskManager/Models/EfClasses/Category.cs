@@ -11,6 +11,6 @@ namespace Models.EfClasses
 
         [MaxLength(150)]
         public string Description { get; set; } = string.Empty;
-        public ICollection<MyTask>? Tasks { get; set; }
+        public ICollection<MyTask> Tasks { get; set; }
     }
 }

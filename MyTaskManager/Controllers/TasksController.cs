@@ -21,6 +21,7 @@ namespace MyTaskManager.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IEnumerable<MyTaskDto>> Get()
         {
+
             return await _repository.GetAllTasksAsync();
         }
 
@@ -35,7 +36,7 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddTask([FromForm] MyTaskDto newTask)
+        public async Task<ActionResult> AddTask([FromBody] CreateTaskRequest newTask)
         {
             await _repository.AddTaskAsync(newTask);
 

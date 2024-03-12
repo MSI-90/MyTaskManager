@@ -1,6 +1,4 @@
-﻿using Models.EfClasses;
-
-namespace MyTaskManager.Models.UserDTO.AuthDTO
+﻿namespace MyTaskManager.Models.UserDTO.AuthDTO
 {
     public class LoginResponseDTO
     {

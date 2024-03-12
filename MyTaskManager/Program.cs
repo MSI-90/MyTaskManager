@@ -70,6 +70,7 @@ namespace MyTaskManager
             //EF_Core
             builder.Services.AddDbContext<TaskContext>();
 
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ITaskRepository, TaskRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
 

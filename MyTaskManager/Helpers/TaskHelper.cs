@@ -1,4 +1,4 @@
-﻿using MyTaskManager.Models.DTO.TaskDTO;
+﻿using MyTaskManager.Models;
 
 namespace Helpers
 {

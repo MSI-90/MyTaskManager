@@ -1,24 +1,41 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design.Internal;
 using Models.EfClasses;
 using MyTaskManager.EfCode;
+using MyTaskManager.Models;
 using MyTaskManager.Models.DTO.TaskDTO;
 using MyTaskManager.Repositories.Interfaces;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace MyTaskManager.Repositories
 {
     public class TaskRepository : ITaskRepository
     {
         private readonly TaskContext _context;
-        public TaskRepository(TaskContext context) => _context = context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public TaskRepository(TaskContext context, IHttpContextAccessor httpContextAccessor)
+        {
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
+        }
 
         public async Task<IEnumerable<MyTaskDto>> GetAllTasksAsync()
         {
-            var modelFromEntity =  await _context.Tasks
+            var verifyedUser = _httpContextAccessor.HttpContext?.User.Identity;
+            var usersClaims = verifyedUser as ClaimsIdentity;
+
+            List<string> decodeClaims = new List<string>();
+            foreach (var userClaim in usersClaims.Claims)
+            {
+                decodeClaims.Add(userClaim.Value);
+            }
+
+            var modelFromEntity = await _context.Tasks/*.Where(t => t.UserId == Convert.ToInt32(decodeClaims[3]))*/
                 .Include(c => c.Category)
                 .Include(p => p.Priory)
-                .ToListAsync() ?? throw new Exception(); 
+                .ToListAsync() ?? throw new Exception();
 
             if (modelFromEntity.Count == 0)
                 return Enumerable.Empty<MyTaskDto>();
@@ -59,16 +76,30 @@ namespace MyTaskManager.Repositories
             };
         }
 
-        public async Task AddTaskAsync(MyTaskDto taskDto)
+        public async Task AddTaskAsync(CreateTaskRequest taskDto)
         {
-            taskDto.Id = _context.Tasks.Count();
+            var verifyedUser = _httpContextAccessor.HttpContext?.User.Identity;
+            if (verifyedUser == null)
+                throw new Exception();
+
+            var usersClaims = verifyedUser as ClaimsIdentity;
+
+            List<string> decodeClaims = new List<string>();
+            foreach (var userClaim in usersClaims.Claims)
+            {
+                decodeClaims.Add(userClaim.Value);
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == Convert.ToInt32(decodeClaims[3]));
 
             var task = new MyTask
             {
+                Id = _context.Tasks.Count(),
                 TitleTask = taskDto.TitleTask,
                 Expiration = taskDto.Expiration,
                 Category = new Category { Name = taskDto.Category ?? string.Empty, Description = taskDto.CategoryDescription ?? string.Empty },
-                Priory = new Priority { Name = taskDto.Prior.ToString() }
+                Priory = new Priority { Name = taskDto.Prior.ToString() },
+                User = user
             };
 
             await _context.Tasks.AddAsync(task);
@@ -85,7 +116,7 @@ namespace MyTaskManager.Repositories
             {
                 oldTask.TitleTask = std.Title;
                 oldTask.Expiration = std.Expiration;
-                
+
                 await _context.SaveChangesAsync();
             }
 
@@ -99,7 +130,7 @@ namespace MyTaskManager.Repositories
                 .SingleOrDefaultAsync(t => t.Id == task.Id);
 
             if (taskId is not null)
-            {   
+            {
                 _context.Tasks.Remove(taskId);
                 _context.SaveChanges();
             }

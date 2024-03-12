@@ -29,6 +29,6 @@ namespace Models.EfClasses
         [Required]
         [MaxLength(20)]
         public string Role { get; set; } = string.Empty;
-        public ICollection<MyTask>? Tasks { get; set; }
+        public ICollection<MyTask> Tasks { get; set; }
     }
 }
