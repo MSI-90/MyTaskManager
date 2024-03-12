@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design.Internal;
+﻿using Microsoft.EntityFrameworkCore;
 using Models.EfClasses;
 using MyTaskManager.EfCode;
 using MyTaskManager.Models;
 using MyTaskManager.Models.DTO.TaskDTO;
 using MyTaskManager.Repositories.Interfaces;
-using System.Reflection.Metadata.Ecma335;
+using MyTaskManager.Services;
+using MyTaskManager.Services.Interfaces;
+using System.Drawing.Text;
 using System.Security.Claims;
 
 namespace MyTaskManager.Repositories
@@ -14,24 +14,15 @@ namespace MyTaskManager.Repositories
     public class TaskRepository : ITaskRepository
     {
         private readonly TaskContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public TaskRepository(TaskContext context, IHttpContextAccessor httpContextAccessor)
+        private readonly IGetUserIdentity _userIdentity;
+        public TaskRepository(TaskContext context, IGetUserIdentity userIdentity)
         {
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
+            _userIdentity = userIdentity;
         }
 
         public async Task<IEnumerable<MyTaskDto>> GetAllTasksAsync()
         {
-            var verifyedUser = _httpContextAccessor.HttpContext?.User.Identity;
-            var usersClaims = verifyedUser as ClaimsIdentity;
-
-            List<string> decodeClaims = new List<string>();
-            foreach (var userClaim in usersClaims.Claims)
-            {
-                decodeClaims.Add(userClaim.Value);
-            }
-
             var modelFromEntity = await _context.Tasks/*.Where(t => t.UserId == Convert.ToInt32(decodeClaims[3]))*/
                 .Include(c => c.Category)
                 .Include(p => p.Priory)
@@ -76,34 +67,51 @@ namespace MyTaskManager.Repositories
             };
         }
 
-        public async Task AddTaskAsync(CreateTaskRequest taskDto)
+        public async Task<CreateTaskResponse> AddTaskAsync(CreateTaskRequest taskDto)
         {
-            var verifyedUser = _httpContextAccessor.HttpContext?.User.Identity;
-            if (verifyedUser == null)
-                throw new Exception();
-
-            var usersClaims = verifyedUser as ClaimsIdentity;
-
-            List<string> decodeClaims = new List<string>();
-            foreach (var userClaim in usersClaims.Claims)
+            IEnumerable<string> decodeClaims = _userIdentity.GetClaims();
+            var userClaim = decodeClaims.ElementAtOrDefault(3);
+            if (userClaim != null && int.TryParse(userClaim, out int userId))
             {
-                decodeClaims.Add(userClaim.Value);
+                var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+                var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Name == taskDto.CategoryName);
+                object category;
+                if (categoryExist != null)
+                    category = categoryExist;
+                else
+                    category = new Category { Name = taskDto.CategoryName ?? string.Empty, Description = taskDto.CategoryDescription ?? string.Empty };
+
+                var priorityExist = await _context.Priority.FirstOrDefaultAsync(p => p.Name == taskDto.Prior.ToString());
+                object priority;
+                if (priorityExist != null)
+                    priority = priorityExist;
+                else
+                    priority = new Priority { Name = taskDto.Prior.ToString() };
+
+                var task = new MyTask
+                {
+                    TitleTask = taskDto.TitleTask,
+                    Expiration = taskDto.Expiration,
+                    Category = (Category)category,
+                    Priory = (Priority)priority,
+                    User = user
+                };
+
+                await _context.Tasks.AddAsync(task);
+                await _context.SaveChangesAsync();
+
+                return new CreateTaskResponse
+                {
+                    Id = task.Id,
+                    TitleTask = task.TitleTask,
+                    Expiration = task.Expiration,
+                    CategoryName = task.Category.Name,
+                    Prior = (PriorityFrom)Enum.Parse(typeof(PriorityFrom), task.Priory.Name),
+                    UserId = task.User.Id,
+                    UserName = task.User.UserName
+                };
             }
-
-            var user = _context.Users.FirstOrDefault(u => u.Id == Convert.ToInt32(decodeClaims[3]));
-
-            var task = new MyTask
-            {
-                Id = _context.Tasks.Count(),
-                TitleTask = taskDto.TitleTask,
-                Expiration = taskDto.Expiration,
-                Category = new Category { Name = taskDto.Category ?? string.Empty, Description = taskDto.CategoryDescription ?? string.Empty },
-                Priory = new Priority { Name = taskDto.Prior.ToString() },
-                User = user
-            };
-
-            await _context.Tasks.AddAsync(task);
-            await _context.SaveChangesAsync();
+            return new CreateTaskResponse();
         }
 
         public async Task TaskUpdate(int oldTaskId, SmallTaskDTO std)

@@ -1,20 +1,26 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyTaskManager.Models;
 using MyTaskManager.Models.DTO.TaskDTO;
 using MyTaskManager.Repositories.Interfaces;
-
+using System.Net;
 
 namespace MyTaskManager.Controllers
 {
-    //[Authorize]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
     {
-        readonly ITaskRepository _repository;
-        public TasksController(ITaskRepository repository) => _repository = repository;
+        private readonly ITaskRepository _repository;
+        protected APIResponse _response;
+        public TasksController(ITaskRepository repository)
+        {
+            _repository = repository;
+            this._response = new();
+        }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -36,11 +42,27 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddTask([FromBody] CreateTaskRequest newTask)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> AddTask([FromForm] CreateTaskRequest newTask)
         {
-            await _repository.AddTaskAsync(newTask);
+            var responseFromCreateTask = await _repository.AddTaskAsync(newTask);
+            if (responseFromCreateTask.Id == 0 || string.IsNullOrEmpty(responseFromCreateTask.TitleTask))
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Произошла ошибка во время добавления новой  задачи");
+                _response.Result = responseFromCreateTask;
+                return BadRequest(_response);
+            }
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = responseFromCreateTask;
+            return Ok(_response);
 
-            return CreatedAtAction(nameof(GetTask), new { Id = newTask.Id }, newTask);
+            //Old realisation
+            //return CreatedAtAction(nameof(GetTask), new { Id = newTask.Id }, newTask);
         }
 
         [HttpPut("{id:min(1)}")]

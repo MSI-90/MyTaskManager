@@ -3,6 +3,8 @@ using Microsoft.OpenApi.Models;
 using MyTaskManager.EfCode;
 using MyTaskManager.Repositories;
 using MyTaskManager.Repositories.Interfaces;
+using MyTaskManager.Services;
+using MyTaskManager.Services.Interfaces;
 using System.Text;
 
 namespace MyTaskManager
@@ -73,6 +75,7 @@ namespace MyTaskManager
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ITaskRepository, TaskRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IGetUserIdentity, UserIdentityFromToken>();
 
             var app = builder.Build();
 
