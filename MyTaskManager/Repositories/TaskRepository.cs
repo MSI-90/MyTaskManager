@@ -73,6 +73,13 @@ namespace MyTaskManager.Repositories
             var userClaim = decodeClaims.ElementAtOrDefault(3);
             if (userClaim != null && int.TryParse(userClaim, out int userId))
             {
+                var uniqueTitleTask = await _context.Tasks
+                    .Where(t => t.User.Id == userId)
+                    .FirstOrDefaultAsync(t => t.TitleTask == taskDto.TitleTask);
+
+                if (uniqueTitleTask != null)
+                    throw new Exception($"Задача, именуемая как - {uniqueTitleTask.TitleTask} уже существует.");
+
                 var user = _context.Users.FirstOrDefault(u => u.Id == userId);
                 var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Name == taskDto.CategoryName);
                 object category;
