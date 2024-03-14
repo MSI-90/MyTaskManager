@@ -4,6 +4,7 @@ using MyTaskManager.Models;
 using MyTaskManager.Repositories.Interfaces;
 using MyTaskManager.Models.DTO.UserDTO.AuthDTO;
 using MyTaskManager.Models.DTO.UserDTO.RegistrationDTO;
+using Microsoft.Extensions.Localization;
 
 namespace MyTaskManager.Controllers
 {
@@ -11,10 +12,12 @@ namespace MyTaskManager.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IStringLocalizer<UserController> _localizer;
         private readonly IUserRepository _userRepo;
         protected APIResponse _response;
-        public UserController(IUserRepository userRepo)
+        public UserController(IStringLocalizer<UserController> localizer, IUserRepository userRepo)
         {
+            _localizer = localizer;
             _userRepo = userRepo;
             this._response = new();
         }
@@ -25,9 +28,10 @@ namespace MyTaskManager.Controllers
             var loginResponse = await _userRepo.Login(model);
             if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
+                string errorMessage = _localizer["Псевдоним или пароль указаны неверно"];
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Псевдоним или пароль указаны неверно");
+                _response.ErrorMessages.Add(errorMessage);
                 return BadRequest(_response);
             }
 

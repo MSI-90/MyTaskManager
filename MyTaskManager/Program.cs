@@ -1,10 +1,15 @@
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MyTaskManager.EfCode;
+using MyTaskManager.Middleware;
 using MyTaskManager.Repositories;
 using MyTaskManager.Repositories.Interfaces;
 using MyTaskManager.Services;
 using MyTaskManager.Services.Interfaces;
+using System.Globalization;
 using System.Text;
 
 namespace MyTaskManager
@@ -15,16 +20,32 @@ namespace MyTaskManager
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            //var configuration = new ConfigurationBuilder()
-            //.SetBasePath(Directory.GetCurrentDirectory())
-            //.AddJsonFile("appsettings.json")
-            //.Build();
+            //Localization
+            builder.Services.AddLocalization(options => { options.ResourcesPath = "Resources"; });
 
             // Add services to the container.
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddViewLocalization(
+                    LanguageViewLocationExpanderFormat.Suffix,
+                    options => { options.ResourcesPath = "Resources"; })
+                .AddDataAnnotationsLocalization();
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
+            //builder.Services.Configure<RequestLocalizationOptions>(options =>
+            //{
+            //    var supportedCultures = new List<CultureInfo>
+            //    {
+            //        new CultureInfo("en-US"),
+            //        new CultureInfo("en-GB"),
+            //        new CultureInfo("fr-FR"),
+            //        new CultureInfo("de-DE"),
+            //        new CultureInfo("ru-RU")
+            //    };
+
+            //    options.DefaultRequestCulture = new RequestCulture(CultureInfo.InvariantCulture);
+            //    options.SupportedCultures = supportedCultures;
+            //    options.SupportedUICultures = supportedCultures;
+            //});
+
             builder.Services.AddSwaggerGen(options =>
             {
                 options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -79,8 +100,6 @@ namespace MyTaskManager
 
             var app = builder.Build();
 
-
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -88,11 +107,25 @@ namespace MyTaskManager
                 app.UseSwaggerUI();
             }
 
+            //app.UseExceptionHandler("/ErrorHandler/ProceedError");
+
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.UseRequestLocalization();
+
+            app.UseStaticFiles();
+
+            var options = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(options.Value);
+
             app.UseHttpsRedirection();
+
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+
 
             app.MapControllers();
 

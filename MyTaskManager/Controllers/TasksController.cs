@@ -47,33 +47,22 @@ namespace MyTaskManager.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddTask([FromForm] CreateTaskRequest newTask)
         {
-            try
-            {
-                var responseFromCreateTask = await _repository.AddTaskAsync(newTask);
-                if (responseFromCreateTask.Id == 0 || string.IsNullOrEmpty(responseFromCreateTask.TitleTask))
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("Произошла ошибка во время добавления новой  задачи");
-                    _response.Result = responseFromCreateTask;
-                    return BadRequest(_response);
-                }
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.IsSuccess = true;
-                _response.Result = responseFromCreateTask;
-                return Ok(_response);
-            }
-            catch (Exception ex)
+            var responseFromCreateTask = await _repository.AddTaskAsync(newTask);
+            if (responseFromCreateTask.Id == 0 || string.IsNullOrEmpty(responseFromCreateTask.TitleTask))
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add(ex.Message);
+                _response.ErrorMessages.Add("Произошла ошибка во время добавления новой  задачи");
+                _response.Result = responseFromCreateTask;
                 return BadRequest(_response);
             }
-
-            //Old realisation
-            //return CreatedAtAction(nameof(GetTask), new { Id = newTask.Id }, newTask);
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = responseFromCreateTask;
+            return Ok(_response);
         }
+        //Old realisation
+            //return CreatedAtAction(nameof(GetTask), new { Id = newTask.Id }, newTask);
 
         [HttpPut("{id:min(1)}")]
         public async Task<IActionResult> UpdateTask([FromBody] SmallTaskDTO newTask, int id)

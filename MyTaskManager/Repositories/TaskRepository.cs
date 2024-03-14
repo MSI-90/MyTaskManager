@@ -81,19 +81,12 @@ namespace MyTaskManager.Repositories
                     throw new Exception($"Задача, именуемая как - {uniqueTitleTask.TitleTask} уже существует.");
 
                 var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+
                 var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Name == taskDto.CategoryName);
-                object category;
-                if (categoryExist != null)
-                    category = categoryExist;
-                else
-                    category = new Category { Name = taskDto.CategoryName ?? string.Empty, Description = taskDto.CategoryDescription ?? string.Empty };
+                var category = categoryExist ?? new Category { Name = taskDto.CategoryName ?? string.Empty, Description = taskDto.CategoryDescription ?? string.Empty };
 
                 var priorityExist = await _context.Priority.FirstOrDefaultAsync(p => p.Name == taskDto.Prior.ToString());
-                object priority;
-                if (priorityExist != null)
-                    priority = priorityExist;
-                else
-                    priority = new Priority { Name = taskDto.Prior.ToString() };
+                var priority = priorityExist ?? new Priority { Name = taskDto.Prior.ToString() };
 
                 var task = new MyTask
                 {
@@ -113,7 +106,7 @@ namespace MyTaskManager.Repositories
                     TitleTask = task.TitleTask,
                     Expiration = task.Expiration,
                     CategoryName = task.Category.Name,
-                    Prior = (PriorityFrom)Enum.Parse(typeof(PriorityFrom), task.Priory.Name),
+                    Prior = Enum.Parse<PriorityFrom>(task.Priory.Name),
                     UserId = task.User.Id,
                     UserName = task.User.UserName
                 };
