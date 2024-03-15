@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MyTaskManager.EfCode;
@@ -9,7 +6,7 @@ using MyTaskManager.Repositories;
 using MyTaskManager.Repositories.Interfaces;
 using MyTaskManager.Services;
 using MyTaskManager.Services.Interfaces;
-using System.Globalization;
+
 using System.Text;
 
 namespace MyTaskManager
@@ -21,30 +18,10 @@ namespace MyTaskManager
             var builder = WebApplication.CreateBuilder(args);
 
             //Localization
-            builder.Services.AddLocalization(options => { options.ResourcesPath = "Resources"; });
+            builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-            // Add services to the container.
-            builder.Services.AddControllers()
-                .AddViewLocalization(
-                    LanguageViewLocationExpanderFormat.Suffix,
-                    options => { options.ResourcesPath = "Resources"; })
-                .AddDataAnnotationsLocalization();
-
-            //builder.Services.Configure<RequestLocalizationOptions>(options =>
-            //{
-            //    var supportedCultures = new List<CultureInfo>
-            //    {
-            //        new CultureInfo("en-US"),
-            //        new CultureInfo("en-GB"),
-            //        new CultureInfo("fr-FR"),
-            //        new CultureInfo("de-DE"),
-            //        new CultureInfo("ru-RU")
-            //    };
-
-            //    options.DefaultRequestCulture = new RequestCulture(CultureInfo.InvariantCulture);
-            //    options.SupportedCultures = supportedCultures;
-            //    options.SupportedUICultures = supportedCultures;
-            //});
+            //Services
+            builder.Services.AddControllers();
 
             builder.Services.AddSwaggerGen(options =>
             {
@@ -90,15 +67,26 @@ namespace MyTaskManager
                 };
             });
 
-            //EF_Core
+            //EF_Core Service
             builder.Services.AddDbContext<TaskContext>();
 
+            //Services
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ITaskRepository, TaskRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IGetUserIdentity, UserIdentityFromToken>();
 
             var app = builder.Build();
+
+            //LocalizationOptions
+            var supportedCultures = new[] { "ru-RU", "en-US" };
+            var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[1])
+            .AddSupportedCultures(supportedCultures)
+            .AddSupportedUICultures(supportedCultures);
+
+            //LocalizationMIddleware
+            app.UseRequestLocalization(localizationOptions);
+            localizationOptions.ApplyCurrentCultureToResponseHeaders = true;
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -113,19 +101,13 @@ namespace MyTaskManager
 
             app.UseRequestLocalization();
 
-            app.UseStaticFiles();
-
-            var options = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
-            app.UseRequestLocalization(options.Value);
-
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-
 
             app.MapControllers();
 

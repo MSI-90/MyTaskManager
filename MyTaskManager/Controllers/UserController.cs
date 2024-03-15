@@ -12,12 +12,13 @@ namespace MyTaskManager.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IStringLocalizer<UserController> _localizer;
+        private readonly IStringLocalizer<UserController> _stringLocalizer;
+
         private readonly IUserRepository _userRepo;
         protected APIResponse _response;
-        public UserController(IStringLocalizer<UserController> localizer, IUserRepository userRepo)
+        public UserController(IStringLocalizer<UserController> stringLocalizer, IUserRepository userRepo)
         {
-            _localizer = localizer;
+            _stringLocalizer = stringLocalizer;
             _userRepo = userRepo;
             this._response = new();
         }
@@ -28,10 +29,11 @@ namespace MyTaskManager.Controllers
             var loginResponse = await _userRepo.Login(model);
             if (loginResponse.User == null || string.IsNullOrEmpty(loginResponse.Token))
             {
-                string errorMessage = _localizer["Псевдоним или пароль указаны неверно"];
+                var stringFromResources = _stringLocalizer["UsernameOrPasswordIsIncorrect"].Value;
+
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add(errorMessage);
+                _response.ErrorMessages.Add(stringFromResources);
                 return BadRequest(_response);
             }
 
@@ -47,18 +49,22 @@ namespace MyTaskManager.Controllers
             bool ifUserNameUnique = _userRepo.IsUniqueUser(model.UserName);
             if (ifUserNameUnique)
             {
+                var stringFromResources = _stringLocalizer["UserIsAlreadyExist"].Value;
+
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Пользователь уже существует");
+                _response.ErrorMessages.Add(stringFromResources);
                 return BadRequest(_response);
             }
 
             var userReg = await _userRepo.Register(model);
             if (userReg == null)
             {
+                var stringFromResources = _stringLocalizer["ErrorDuringRegistration"].Value;
+
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Ошибка во время регистрации");
+                _response.ErrorMessages.Add(stringFromResources);
                 return BadRequest(_response);
             }
 

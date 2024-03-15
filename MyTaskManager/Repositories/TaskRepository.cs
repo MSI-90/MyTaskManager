@@ -88,6 +88,8 @@ namespace MyTaskManager.Repositories
                 var priorityExist = await _context.Priority.FirstOrDefaultAsync(p => p.Name == taskDto.Prior.ToString());
                 var priority = priorityExist ?? new Priority { Name = taskDto.Prior.ToString() };
 
+                //string[] formats = { "yyyy-MM-dd", "yyyy/MM/dd" };
+
                 var task = new MyTask
                 {
                     TitleTask = taskDto.TitleTask,
