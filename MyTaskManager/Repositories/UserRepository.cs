@@ -73,7 +73,7 @@ namespace MyTaskManager.Repositories
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(authJwtClaims),
-                Expires = DateTime.UtcNow.AddDays(3),
+                Expires = DateTime.Now.AddMinutes(1)/*AddDays(3)*/,
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature)
             };
 

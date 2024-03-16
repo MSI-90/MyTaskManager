@@ -80,7 +80,7 @@ namespace MyTaskManager
 
             //LocalizationOptions
             var supportedCultures = new[] { "ru-RU", "en-US" };
-            var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[1])
+            var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[0])
             .AddSupportedCultures(supportedCultures)
             .AddSupportedUICultures(supportedCultures);
 
@@ -98,8 +98,6 @@ namespace MyTaskManager
             //app.UseExceptionHandler("/ErrorHandler/ProceedError");
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
-
-            app.UseRequestLocalization();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

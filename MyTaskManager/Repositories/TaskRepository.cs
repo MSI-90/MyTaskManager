@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Models.EfClasses;
+using MyTaskManager.Controllers;
 using MyTaskManager.EfCode;
 using MyTaskManager.Models;
 using MyTaskManager.Models.DTO.TaskDTO;
@@ -15,15 +17,19 @@ namespace MyTaskManager.Repositories
     {
         private readonly TaskContext _context;
         private readonly IGetUserIdentity _userIdentity;
-        public TaskRepository(TaskContext context, IGetUserIdentity userIdentity)
+        private readonly IStringLocalizer<TasksController> _stringLocalizer;
+        public TaskRepository(TaskContext context, IGetUserIdentity userIdentity, IStringLocalizer<TasksController> stringLocalizer)
         {
             _context = context;
             _userIdentity = userIdentity;
+            _stringLocalizer = stringLocalizer;
         }
 
         public async Task<IEnumerable<MyTaskDto>> GetAllTasksAsync()
         {
-            var modelFromEntity = await _context.Tasks/*.Where(t => t.UserId == Convert.ToInt32(decodeClaims[3]))*/
+            IEnumerable<string> decodeClaims = _userIdentity.GetClaims();
+            var userClaim = decodeClaims.ElementAtOrDefault(3);
+            var modelFromEntity = await _context.Tasks.Where(t => t.User.Id == Convert.ToInt32(userClaim))
                 .Include(c => c.Category)
                 .Include(p => p.Priory)
                 .ToListAsync() ?? throw new Exception();
@@ -78,7 +84,12 @@ namespace MyTaskManager.Repositories
                     .FirstOrDefaultAsync(t => t.TitleTask == taskDto.TitleTask);
 
                 if (uniqueTitleTask != null)
-                    throw new Exception($"Задача, именуемая как - {uniqueTitleTask.TitleTask} уже существует.");
+                {
+                    string serverError = _stringLocalizer["TaskIsSet"].Value;
+                    string error = string.Format(serverError, uniqueTitleTask.TitleTask);
+                    throw new Exception(error);
+                }
+
 
                 var user = _context.Users.FirstOrDefault(u => u.Id == userId);
 
