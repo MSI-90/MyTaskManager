@@ -6,10 +6,7 @@ using MyTaskManager.EfCode;
 using MyTaskManager.Models;
 using MyTaskManager.Models.DTO.TaskDTO;
 using MyTaskManager.Repositories.Interfaces;
-using MyTaskManager.Services;
 using MyTaskManager.Services.Interfaces;
-using System.Drawing.Text;
-using System.Security.Claims;
 
 namespace MyTaskManager.Repositories
 {
@@ -24,7 +21,6 @@ namespace MyTaskManager.Repositories
             _userIdentity = userIdentity;
             _stringLocalizer = stringLocalizer;
         }
-
         public async Task<IEnumerable<MyTaskDto>> GetAllTasksAsync()
         {
             IEnumerable<string> decodeClaims = _userIdentity.GetClaims();
@@ -43,7 +39,7 @@ namespace MyTaskManager.Repositories
                 TitleTask = task.TitleTask,
                 Category = task.Category.Name,
                 CategoryDescription = task.Category.Description,
-                Prior = (PriorityFrom)Enum.Parse(typeof(PriorityFrom), task.Priory.Name),
+                Prior = Enum.Parse<PriorityFrom>(task.Priory.Name),
                 Expiration = task.Expiration
             });
 
@@ -68,7 +64,7 @@ namespace MyTaskManager.Repositories
                 Id = model.Id,
                 TitleTask = model.TitleTask,
                 Category = model.Category.Name,
-                Prior = (PriorityFrom)Enum.Parse(typeof(PriorityFrom), model.Priory.Name),
+                Prior = Enum.Parse<PriorityFrom>(model.Priory.Name),
                 Expiration = model.Expiration
             };
         }
@@ -90,7 +86,6 @@ namespace MyTaskManager.Repositories
                     throw new Exception(error);
                 }
 
-
                 var user = _context.Users.FirstOrDefault(u => u.Id == userId);
 
                 var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Name == taskDto.CategoryName);
@@ -98,8 +93,6 @@ namespace MyTaskManager.Repositories
 
                 var priorityExist = await _context.Priority.FirstOrDefaultAsync(p => p.Name == taskDto.Prior.ToString());
                 var priority = priorityExist ?? new Priority { Name = taskDto.Prior.ToString() };
-
-                //string[] formats = { "yyyy-MM-dd", "yyyy/MM/dd" };
 
                 var task = new MyTask
                 {

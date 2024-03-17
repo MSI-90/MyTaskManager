@@ -16,7 +16,7 @@ namespace MyTaskManager.Models.DTO.TaskDTO
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public PriorityFrom Prior { get; set; }
-        public DateTime Expiration { get; set; } = DateTime.Now;
+        public DateTime Expiration { get; set; }
 
         [JsonIgnore]
         public string PriorityDescription

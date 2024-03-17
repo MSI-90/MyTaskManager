@@ -63,7 +63,8 @@ namespace MyTaskManager
                 {
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    IssuerSigningKey = key
+                    IssuerSigningKey = key,
+                    ClockSkew = TimeSpan.Zero
                 };
             });
 
