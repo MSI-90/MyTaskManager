@@ -28,9 +28,9 @@ namespace MyTaskManager.Repositories
             var modelFromEntity = await _context.Tasks.Where(t => t.User.Id == Convert.ToInt32(userClaim))
                 .Include(c => c.Category)
                 .Include(p => p.Priory)
-                .ToListAsync() ?? throw new Exception();
+                .ToListAsync();
 
-            if (modelFromEntity.Count == 0)
+            if (!modelFromEntity.Any())
                 return Enumerable.Empty<MyTaskDto>();
 
             var taskDto = modelFromEntity.Select(task => new MyTaskDto
@@ -51,10 +51,13 @@ namespace MyTaskManager.Repositories
             if (id <= 0)
                 return new MyTaskDto();
 
-            var model = await _context.Tasks
+            IEnumerable<string> decodeClaims = _userIdentity.GetClaims();
+            var userClaim = decodeClaims.ElementAtOrDefault(3);
+
+            var model = await _context.Tasks.Where(t => t.User.Id == Convert.ToInt32(userClaim))
             .Include(c => c.Category)
             .Include(p => p.Priory)
-            .FirstOrDefaultAsync(t => t.Id == id) ?? new MyTask(); //throw new Exception();
+            .FirstOrDefaultAsync(t => t.Id == id) ?? new MyTask();
 
             if (model.Id == default)
                 return new MyTaskDto();
@@ -64,6 +67,7 @@ namespace MyTaskManager.Repositories
                 Id = model.Id,
                 TitleTask = model.TitleTask,
                 Category = model.Category.Name,
+                CategoryDescription = model.Category.Description,
                 Prior = Enum.Parse<PriorityFrom>(model.Priory.Name),
                 Expiration = model.Expiration
             };
@@ -88,10 +92,10 @@ namespace MyTaskManager.Repositories
 
                 var user = _context.Users.FirstOrDefault(u => u.Id == userId);
 
-                var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Name == taskDto.CategoryName);
+                var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Name.ToLower() == taskDto.CategoryName.ToLower());
                 var category = categoryExist ?? new Category { Name = taskDto.CategoryName ?? string.Empty, Description = taskDto.CategoryDescription ?? string.Empty };
 
-                var priorityExist = await _context.Priority.FirstOrDefaultAsync(p => p.Name == taskDto.Prior.ToString());
+                var priorityExist = await _context.Priority.FirstOrDefaultAsync(p => p.Name.ToLower() == taskDto.Prior.ToString().ToLower());
                 var priority = priorityExist ?? new Priority { Name = taskDto.Prior.ToString() };
 
                 var task = new MyTask
@@ -120,20 +124,22 @@ namespace MyTaskManager.Repositories
             return new CreateTaskResponse();
         }
 
-        public async Task TaskUpdate(int oldTaskId, SmallTaskDTO std)
+        public async Task TaskUpdate(int oldTaskId, UpdateTaskDTO taskUpdate)
         {
             var oldTask = _context.Tasks.Find(oldTaskId);
 
-            if (oldTask.Id == 0)
-                throw new Exception("Don't Found");
-            else
+            if (oldTask != null)
             {
-                oldTask.TitleTask = std.Title;
-                oldTask.Expiration = std.Expiration;
+                var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Name.ToLower() == taskUpdate.CategoryName.ToLower());
+                var category = categoryExist ?? new Category { Name = taskUpdate.CategoryName, Description = taskUpdate.CategoryDescription };
+
+                oldTask.TitleTask = taskUpdate.Title;
+                oldTask.Category = category;
+                oldTask.Priory.Name = taskUpdate.Priority.ToString();
+                oldTask.Expiration = taskUpdate.Expiration;
 
                 await _context.SaveChangesAsync();
             }
-
         }
 
         public async Task Delete(MyTaskDto task)

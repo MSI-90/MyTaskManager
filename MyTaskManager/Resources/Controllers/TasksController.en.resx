@@ -120,6 +120,9 @@
   <data name="ErrorOfAddingTask" xml:space="preserve">
     <value>An error occurred while adding a new task</value>
   </data>
+  <data name="ErrorOfGetTaskById" xml:space="preserve">
+    <value>Content is unavailable for this identifier</value>
+  </data>
   <data name="TaskIsSet" xml:space="preserve">
     <value>A task named as - {0} already exists.</value>
   </data>

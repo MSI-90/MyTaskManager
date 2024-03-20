@@ -24,6 +24,8 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Login([FromForm] LoginRequestDTO model)
         {
             var loginResponse = await _userRepo.Login(model);
@@ -44,6 +46,8 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Register([FromForm] RegisterationRequestDTO model)
         {
             bool ifUserNameUnique = _userRepo.IsUniqueUser(model.UserName);

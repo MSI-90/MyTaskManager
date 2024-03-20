@@ -9,8 +9,8 @@ using System.Net;
 
 namespace MyTaskManager.Controllers
 {
-    //[Authorize]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
@@ -26,28 +26,38 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IEnumerable<MyTaskDto>> Get()
         {
-
             return await _repository.GetAllTasksAsync();
         }
 
         [HttpGet("{id:min(1)}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<MyTaskDto>> GetTask(int id)
         {
             var taskById = await _repository.GetTaskAsync(id);
+
             if (taskById.Id == 0)
-                return BadRequest();
+            {
+                var notFoundMessage = _localization["ErrorOfGetTaskById"].Value;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add(notFoundMessage);
+                return NotFound(_response);
+            }
 
             return Ok(taskById);
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> AddTask([FromForm] CreateTaskRequest newTask)
         {
             var responseFromCreateTask = await _repository.AddTaskAsync(newTask);
@@ -60,30 +70,44 @@ namespace MyTaskManager.Controllers
                 _response.Result = responseFromCreateTask;
                 return BadRequest(_response);
             }
-            _response.StatusCode = HttpStatusCode.OK;
+            _response.StatusCode = HttpStatusCode.Created;
             _response.IsSuccess = true;
             _response.Result = responseFromCreateTask;
-            return Ok(_response);
+            return CreatedAtAction(nameof(GetTask), new { Id = responseFromCreateTask.Id }, _response);
         }
-        //Old realisation
-        //return CreatedAtAction(nameof(GetTask), new { Id = newTask.Id }, newTask);
 
         [HttpPut("{id:min(1)}")]
-        public async Task<IActionResult> UpdateTask([FromBody] SmallTaskDTO newTask, int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> UpdateTask([FromForm] UpdateTaskDTO newTaskForUpdate, int id)
         {
             var oldTaskId = await _repository.GetTaskAsync(id);
 
+            //if (oldTaskId.Id == 0)
+            //{
+            //    _response.StatusCode = HttpStatusCode.BadRequest;
+            //    _response.IsSuccess = false;
+            //    _response.ErrorMessages.Add("");
+            //    _response.Result = ;
+            //}
+
             if (oldTaskId.Id > 0)
             {
-                await _repository.TaskUpdate(oldTaskId.Id, newTask);
+                await _repository.TaskUpdate(oldTaskId.Id, newTaskForUpdate);
                 return NoContent();
             }
 
             return NotFound();
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:min(1)}")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTask(int id)
         {
             var task = await _repository.GetTaskAsync(id);
