@@ -90,10 +90,20 @@ namespace MyTaskManager.Repositories
                     throw new Exception(error);
                 }
 
-                var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+                var dateFromRequest = new DateTime();
+                dateFromRequest = taskDto.Expiration;
+                if (dateFromRequest < DateTime.Now)
+                {
+                    string serverError = _stringLocalizer["DateTimeIsLow"].Value;
+                    string error = string.Format(serverError, dateFromRequest, DateTime.Now);
+                    throw new Exception(error);
+                }
 
-                var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Name.ToLower() == taskDto.CategoryName.ToLower());
-                var category = categoryExist ?? new Category { Name = taskDto.CategoryName ?? string.Empty, Description = taskDto.CategoryDescription ?? string.Empty };
+                //var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                var user = await _context.Users.Include(u => u.Categories).FirstOrDefaultAsync(u => u.Id == userId) ?? new User();
+
+                var categoryExist = user.Categories.FirstOrDefault(c => c.Name.ToLower() == taskDto.CategoryName.ToLower()) ??
+                    new Category { Name = taskDto.CategoryName, Description = taskDto.CategoryDescription };
 
                 var priorityExist = await _context.Priority.FirstOrDefaultAsync(p => p.Name.ToLower() == taskDto.Prior.ToString().ToLower());
                 var priority = priorityExist ?? new Priority { Name = taskDto.Prior.ToString() };
@@ -102,10 +112,12 @@ namespace MyTaskManager.Repositories
                 {
                     TitleTask = taskDto.TitleTask,
                     Expiration = taskDto.Expiration,
-                    Category = (Category)category,
+                    Category = (Category)categoryExist,
                     Priory = (Priority)priority,
                     User = user
                 };
+
+                user.Categories.Add(categoryExist);
 
                 await _context.Tasks.AddAsync(task);
                 await _context.SaveChangesAsync();

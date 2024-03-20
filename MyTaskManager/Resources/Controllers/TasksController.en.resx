@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DateTimeIsLow" xml:space="preserve">
+    <value>The planned completion date of the task is {0}, the current date is {1}. Schedule a new completion date for this task</value>
+  </data>
   <data name="ErrorOfAddingTask" xml:space="preserve">
     <value>An error occurred while adding a new task</value>
   </data>
