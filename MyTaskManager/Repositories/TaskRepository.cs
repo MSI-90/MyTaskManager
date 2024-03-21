@@ -27,7 +27,6 @@ namespace MyTaskManager.Repositories
             var userClaim = decodeClaims.ElementAtOrDefault(3);
             var modelFromEntity = await _context.Tasks.Where(t => t.User.Id == Convert.ToInt32(userClaim))
                 .Include(c => c.Category)
-                .Include(p => p.Priory)
                 .ToListAsync();
 
             if (!modelFromEntity.Any())
@@ -39,7 +38,7 @@ namespace MyTaskManager.Repositories
                 TitleTask = task.TitleTask,
                 Category = task.Category.Name,
                 CategoryDescription = task.Category.Description,
-                Prior = Enum.Parse<PriorityFrom>(task.Priory.Name),
+                Prioriry = task.Priority,
                 Expiration = task.Expiration
             });
 
@@ -56,7 +55,6 @@ namespace MyTaskManager.Repositories
 
             var model = await _context.Tasks.Where(t => t.User.Id == Convert.ToInt32(userClaim))
             .Include(c => c.Category)
-            .Include(p => p.Priory)
             .FirstOrDefaultAsync(t => t.Id == id) ?? new MyTask();
 
             if (model.Id == default)
@@ -68,7 +66,7 @@ namespace MyTaskManager.Repositories
                 TitleTask = model.TitleTask,
                 Category = model.Category.Name,
                 CategoryDescription = model.Category.Description,
-                Prior = Enum.Parse<PriorityFrom>(model.Priory.Name),
+                Prioriry = model.Priority,
                 Expiration = model.Expiration
             };
         }
@@ -99,21 +97,20 @@ namespace MyTaskManager.Repositories
                     throw new Exception(error);
                 }
 
-                //var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                var user = await _context.Users.Include(u => u.Categories).FirstOrDefaultAsync(u => u.Id == userId) ?? new User();
+                var user = await _context.Users.Include(u => u.Categories).FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user == null)
+                    return new CreateTaskResponse();
 
                 var categoryExist = user.Categories.FirstOrDefault(c => c.Name.ToLower() == taskDto.CategoryName.ToLower()) ??
                     new Category { Name = taskDto.CategoryName, Description = taskDto.CategoryDescription };
-
-                var priorityExist = await _context.Priority.FirstOrDefaultAsync(p => p.Name.ToLower() == taskDto.Prior.ToString().ToLower());
-                var priority = priorityExist ?? new Priority { Name = taskDto.Prior.ToString() };
 
                 var task = new MyTask
                 {
                     TitleTask = taskDto.TitleTask,
                     Expiration = taskDto.Expiration,
                     Category = (Category)categoryExist,
-                    Priory = (Priority)priority,
+                    Priority = taskDto.Prior,
                     User = user
                 };
 
@@ -128,7 +125,8 @@ namespace MyTaskManager.Repositories
                     TitleTask = task.TitleTask,
                     Expiration = task.Expiration,
                     CategoryName = task.Category.Name,
-                    Prior = Enum.Parse<PriorityFrom>(task.Priory.Name),
+                    CategoryDescription = task.Category.Description,
+                    Prior = taskDto.Prior,
                     UserId = task.User.Id,
                     UserName = task.User.UserName
                 };
@@ -147,7 +145,7 @@ namespace MyTaskManager.Repositories
 
                 oldTask.TitleTask = taskUpdate.Title;
                 oldTask.Category = category;
-                oldTask.Priory.Name = taskUpdate.Priority.ToString();
+                oldTask.Priority = taskUpdate.Priority;
                 oldTask.Expiration = taskUpdate.Expiration;
 
                 await _context.SaveChangesAsync();
@@ -158,7 +156,6 @@ namespace MyTaskManager.Repositories
         {
             var taskId = await _context.Tasks
                 .Include(c => c.Category)
-                .Include(p => p.Priory)
                 .SingleOrDefaultAsync(t => t.Id == task.Id);
 
             if (taskId is not null)

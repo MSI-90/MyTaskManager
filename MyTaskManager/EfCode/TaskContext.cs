@@ -10,7 +10,6 @@ namespace MyTaskManager.EfCode
         public DbSet<MyTask> Tasks { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Priority> Priority { get; set; }
 
         public TaskContext(DbContextOptions<TaskContext> options, IConfiguration configuration) : base(options)
         {

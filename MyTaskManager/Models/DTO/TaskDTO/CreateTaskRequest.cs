@@ -9,14 +9,11 @@ namespace MyTaskManager.Models.DTO.TaskDTO
     public class CreateTaskRequest
     {
         [Required]
-        [MaxLength(100)]
+        [MaxLength(100, ErrorMessage = "Название задачи может содержать не более 100 символов")]
         public string TitleTask { get; set; } = string.Empty;
         public string CategoryName { get; set; } = string.Empty;
         public string? CategoryDescription { get; set; } = string.Empty;
-
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public PriorityFrom Prior { get; set; }
         public DateTime Expiration { get; set; } = DateTime.Now;
-        //public string Date { get; set; } = DateTime.Now.ToString("G");
     }
 }

@@ -15,13 +15,13 @@ namespace MyTaskManager.Models.DTO.TaskDTO
         public string CategoryDescription { get; set; } = string.Empty;
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public PriorityFrom Prior { get; set; }
+        public PriorityFrom Prioriry { get; set; }
         public DateTime Expiration { get; set; }
 
         [JsonIgnore]
         public string PriorityDescription
         {
-            get { return new TaskHelper().GetPriorityDescription(Prior); }
+            get { return new TaskHelper().GetPriorityDescription(Prioriry); }
         }
     }
 }
