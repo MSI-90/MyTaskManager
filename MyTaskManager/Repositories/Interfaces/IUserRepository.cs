@@ -9,6 +9,6 @@ namespace MyTaskManager.Repositories.Interfaces
     {
         bool IsUniqueUser(string username);
         Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);
-        Task<LocalUser> Register(RegisterationRequestDTO registerationRequestDTO);
+        Task<RegistrationResponseDTO> Register(RegisterationRequestDTO registerationRequestDTO);
     }
 }

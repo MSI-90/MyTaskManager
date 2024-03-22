@@ -126,6 +126,9 @@
   <data name="ErrorOfGetTaskById" xml:space="preserve">
     <value>Нет данных для указаного идентификатора</value>
   </data>
+  <data name="notFindTaskForUpdate" xml:space="preserve">
+    <value>Невозможно найти задачу для идентификатора = {0}</value>
+  </data>
   <data name="TaskIsSet" xml:space="preserve">
     <value>Задача, именуемая как - {0} уже существует.</value>
   </data>

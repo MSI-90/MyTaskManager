@@ -42,7 +42,7 @@ namespace MyTaskManager.Controllers
         {
             var taskById = await _repository.GetTaskAsync(id);
 
-            if (taskById.Id == 0)
+            if (taskById.Id <= 0)
             {
                 var notFoundMessage = _localization["ErrorOfGetTaskById"].Value;
                 _response.StatusCode = HttpStatusCode.NotFound;
@@ -77,28 +77,27 @@ namespace MyTaskManager.Controllers
         }
 
         [HttpPut("{id:min(1)}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Roles = "Admin, User")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateTask([FromForm] UpdateTaskDTO newTaskForUpdate, int id)
         {
             var oldTaskId = await _repository.GetTaskAsync(id);
 
-            //if (oldTaskId.Id == 0)
-            //{
-            //    _response.StatusCode = HttpStatusCode.BadRequest;
-            //    _response.IsSuccess = false;
-            //    _response.ErrorMessages.Add("");
-            //    _response.Result = ;
-            //}
-
-            if (oldTaskId.Id > 0)
+            if (oldTaskId.Id <= 0)
             {
-                await _repository.TaskUpdate(oldTaskId.Id, newTaskForUpdate);
-                return NoContent();
+                var notFoundMessage = _localization["ErrorOfGetTaskById"].Value;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add(notFoundMessage);
+                return BadRequest(_response);
             }
 
-            return NotFound();
+            await _repository.TaskUpdate(oldTaskId.Id, newTaskForUpdate);
+            return NoContent();
         }
 
         [HttpDelete("{id:min(1)}")]

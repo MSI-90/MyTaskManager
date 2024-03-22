@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Models.EfClasses;
 using MyTaskManager.Controllers;
@@ -140,7 +142,6 @@ namespace MyTaskManager.Repositories
         public async Task TaskUpdate(int oldTaskId, UpdateTaskDTO taskUpdate)
         {
             var oldTask = _context.Tasks.Find(oldTaskId);
-
             if (oldTask != null)
             {
                 var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Name.ToLower() == taskUpdate.CategoryName.ToLower());

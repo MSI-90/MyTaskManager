@@ -3,7 +3,6 @@ using Models.EfClasses;
 using MyTaskManager.EfCode;
 using MyTaskManager.Infrastructure;
 using MyTaskManager.Models;
-using MyTaskManager.Models.DTO.UserDTO;
 using MyTaskManager.Models.DTO.UserDTO.AuthDTO;
 using MyTaskManager.Models.DTO.UserDTO.RegistrationDTO;
 using MyTaskManager.Models.UserDTO.AuthDTO;
@@ -91,11 +90,12 @@ namespace MyTaskManager.Repositories
             return loginResponseDTO;
         }
 
-        public async Task<LocalUser> Register(RegisterationRequestDTO registerationRequestDTO)
+        public async Task<RegistrationResponseDTO> Register(RegisterationRequestDTO registerationRequestDTO)
         {
 
             var passwordHasher = new PasswordHasher();
-            LocalUser localUser = new()
+
+            User user = new()
             {
                 UserName = registerationRequestDTO.UserName,
                 LastName = registerationRequestDTO.LastName,
@@ -105,21 +105,24 @@ namespace MyTaskManager.Repositories
                 Role = UserRoles.User.ToString()
             };
 
-            User user = new()
+            var userAdd = await _taskContext.Users.AddAsync(user) ?? null;
+
+            if (userAdd != null)
             {
-                UserName = localUser.UserName,
-                LastName = localUser.LastName,
-                FirstName = localUser.FirstName,
-                Email = localUser.Email,
-                Password = localUser.Password,
-                Role = UserRoles.User.ToString()
-            };
+                await _taskContext.SaveChangesAsync();
 
-            _taskContext.Users.Add(user);
-            await _taskContext.SaveChangesAsync();
+                RegistrationResponseDTO regResponse = new()
+                {
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Role = Enum.Parse<UserRoles>(user.Role)
+                };
+                return regResponse;
+            }
 
-            localUser.Password = "";
-            return localUser;
+            return new RegistrationResponseDTO();
         }
     }
 }

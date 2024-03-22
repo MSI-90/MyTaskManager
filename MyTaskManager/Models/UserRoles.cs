@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace MyTaskManager.Models.DTO.UserDTO
+namespace MyTaskManager.Models
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum UserRoles : byte
