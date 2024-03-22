@@ -24,10 +24,13 @@ namespace MyTaskManager.Repositories
         public async Task<IEnumerable<MyTaskDto>> GetAllTasksAsync()
         {
             IEnumerable<string> decodeClaims = _userIdentity.GetClaims();
+            if (!decodeClaims.Any())
+                return Enumerable.Empty<MyTaskDto>();
+
             var userClaim = decodeClaims.ElementAtOrDefault(3);
             var modelFromEntity = await _context.Tasks.Where(t => t.User.Id == Convert.ToInt32(userClaim))
                 .Include(c => c.Category)
-                .ToListAsync();
+                .ToListAsync() ?? new List<MyTask>();
 
             if (!modelFromEntity.Any())
                 return Enumerable.Empty<MyTaskDto>();

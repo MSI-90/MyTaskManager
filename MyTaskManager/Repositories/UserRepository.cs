@@ -18,10 +18,12 @@ namespace MyTaskManager.Repositories
     {
         private readonly TaskContext _taskContext;
         private readonly string _secretKey = "";
+        private readonly int _tokenExpiry = 0;
         PasswordHasher passwordHasher;
         public UserRepository(TaskContext taskContext, IConfiguration configuration)
         {
             _taskContext = taskContext;
+            _tokenExpiry = configuration.GetValue<int>("JWT:ExpiryMinutes", _tokenExpiry);
             _secretKey = configuration.GetValue<string>("JWT:Secret", _secretKey) ?? _secretKey;
         }
         public bool IsUniqueUser(string username)
@@ -73,7 +75,7 @@ namespace MyTaskManager.Repositories
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(authJwtClaims),
-                Expires = DateTime.Now.AddMinutes(17),
+                Expires = DateTime.Now.AddMinutes(_tokenExpiry),
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature)
             };
 

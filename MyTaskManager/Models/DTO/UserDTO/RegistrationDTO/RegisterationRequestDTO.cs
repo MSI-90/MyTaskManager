@@ -30,9 +30,5 @@ namespace MyTaskManager.Models.DTO.UserDTO.RegistrationDTO
         [Compare(nameof(Password))]
         [DataType(DataType.Password)]
         public string RequirePassword { get; set; } = string.Empty;
-
-        //[HiddenInput]
-        //[MaxLength(0)]
-        //public string Role { get; set; } = string.Empty;
     }
 }
