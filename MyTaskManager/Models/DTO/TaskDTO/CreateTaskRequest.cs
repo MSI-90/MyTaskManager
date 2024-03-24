@@ -1,8 +1,5 @@
 ﻿
-using Helpers;
-using Models.EfClasses;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace MyTaskManager.Models.DTO.TaskDTO
 {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.DotNet.Scaffolding.Shared.T4Templating;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Models.EfClasses;
@@ -9,6 +10,7 @@ using MyTaskManager.Models;
 using MyTaskManager.Models.DTO.TaskDTO;
 using MyTaskManager.Repositories.Interfaces;
 using MyTaskManager.Services.Interfaces;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.Mapping;
 
 namespace MyTaskManager.Repositories
 {
@@ -139,18 +141,20 @@ namespace MyTaskManager.Repositories
             return new CreateTaskResponse();
         }
 
-        public async Task TaskUpdate(int oldTaskId, UpdateTaskDTO taskUpdate)
+        public async Task TaskUpdate(int id, UpdateTaskDTO taskUpdate)
         {
-            var oldTask = _context.Tasks.Find(oldTaskId);
-            if (oldTask != null)
-            {
-                var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Name.ToLower() == taskUpdate.CategoryName.ToLower());
-                var category = categoryExist ?? new Category { Name = taskUpdate.CategoryName, Description = taskUpdate.CategoryDescription };
+            var oldTask = await _context.Tasks.SingleOrDefaultAsync(c => c.Id == id);
 
-                oldTask.TitleTask = taskUpdate.Title;
-                oldTask.Category = category;
-                oldTask.Priority = taskUpdate.Priority;
-                oldTask.Expiration = taskUpdate.Expiration;
+            if (oldTask.Id > 0 && !string.IsNullOrEmpty(oldTask.TitleTask))
+            {
+                var dt = DateTime.Now;
+                var taskDate = taskUpdate.Expiration < oldTask.Expiration ? dt.AddHours(1) : taskUpdate.Expiration;
+
+                oldTask.TitleTask = string.IsNullOrEmpty(taskUpdate.Title) ? oldTask.TitleTask : taskUpdate.Title;
+                oldTask.Category.Name = string.IsNullOrEmpty(taskUpdate.CategoryName) ? oldTask.Category.Name : taskUpdate.CategoryName;
+                oldTask.Category.Description = string.IsNullOrEmpty(taskUpdate.CategoryDescription) ? oldTask.Category.Description : taskUpdate.CategoryDescription;
+                oldTask.Priority = Enum.IsDefined(typeof(PriorityFrom), taskUpdate.Priority) ? oldTask.Priority : taskUpdate.Priority;
+                oldTask.Expiration = DateTime.SpecifyKind(taskDate, DateTimeKind.Utc);
 
                 await _context.SaveChangesAsync();
             }

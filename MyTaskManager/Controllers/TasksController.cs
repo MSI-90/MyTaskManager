@@ -58,7 +58,7 @@ namespace MyTaskManager.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult> AddTask([FromForm] CreateTaskRequest newTask)
+        public async Task<ActionResult> AddTask([FromBody] CreateTaskRequest newTask)
         {
             var responseFromCreateTask = await _repository.AddTaskAsync(newTask);
             if (responseFromCreateTask.Id == 0 || string.IsNullOrEmpty(responseFromCreateTask.TitleTask))
