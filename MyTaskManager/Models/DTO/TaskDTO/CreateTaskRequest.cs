@@ -10,7 +10,9 @@ namespace MyTaskManager.Models.DTO.TaskDTO
         public string TitleTask { get; set; } = string.Empty;
         public string CategoryName { get; set; } = string.Empty;
         public string? CategoryDescription { get; set; } = string.Empty;
-        public PriorityFrom Prior { get; set; }
+        public string Prior { get; set; } = string.Empty;
+
+        [DataType(DataType.DateTime)]
         public DateTime Expiration { get; set; } = DateTime.Now;
     }
 }

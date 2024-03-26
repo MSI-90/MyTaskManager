@@ -92,7 +92,6 @@ namespace MyTaskManager.Repositories
 
         public async Task<RegistrationResponseDTO> Register(RegisterationRequestDTO registerationRequestDTO)
         {
-
             var passwordHasher = new PasswordHasher();
 
             User user = new()

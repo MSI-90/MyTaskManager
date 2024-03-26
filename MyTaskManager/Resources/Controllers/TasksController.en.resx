@@ -120,6 +120,9 @@
   <data name="DateTimeIsLow" xml:space="preserve">
     <value>The planned completion date of the task is {0}, the current date is {1}. Schedule a new completion date for this task</value>
   </data>
+  <data name="DontUser" xml:space="preserve">
+    <value>User isn't available </value>
+  </data>
   <data name="ErrorOfAddingTask" xml:space="preserve">
     <value>An error occurred while adding a new task</value>
   </data>
@@ -131,5 +134,8 @@
   </data>
   <data name="TaskIsSet" xml:space="preserve">
     <value>A task named as - {0} already exists.</value>
+  </data>
+  <data name="ValueDontPrefer" xml:space="preserve">
+    <value>The value {0} don't available</value>
   </data>
 </root>

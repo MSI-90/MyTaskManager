@@ -84,10 +84,20 @@ namespace MyTaskManager.Repositories
             var userClaim = decodeClaims.ElementAtOrDefault(3);
             if (userClaim != null && int.TryParse(userClaim, out int userId))
             {
+                //ищем пользователя и включаем в результат список категорий задач, если они имеются у пользователя
+                var user = await _context.Users.Include(u => u.Categories).FirstOrDefaultAsync(u => u.Id == userId);
+                if (user == null)
+                {
+                    string error = _stringLocalizer["DontUser"].Value;
+                    throw new Exception(error);
+                }
+
+                //имеется ли уже задача у пользователя в таблице БД?
                 var uniqueTitleTask = await _context.Tasks
                     .Where(t => t.User.Id == userId)
                     .FirstOrDefaultAsync(t => t.TitleTask == taskDto.TitleTask);
 
+                //если есть
                 if (uniqueTitleTask != null)
                 {
                     string serverError = _stringLocalizer["TaskIsSet"].Value;
@@ -95,19 +105,22 @@ namespace MyTaskManager.Repositories
                     throw new Exception(error);
                 }
 
-                var dateFromRequest = new DateTime();
-                dateFromRequest = taskDto.Expiration;
+                //Проверка на значение указаное как приоритет задачи
+                if (!Enum.IsDefined(typeof(PriorityFrom), taskDto.Prior))
+                {
+                    var serverError = _stringLocalizer["ValueDontPrefer"];
+                    var error = string.Format(serverError, taskDto.Prior);
+                    throw new Exception(error);
+                }
+
+                //проверка на дату-время планируемых у задачи как дата и время к закрытию задачи
+                var dateFromRequest = taskDto.Expiration;
                 if (dateFromRequest < DateTime.Now)
                 {
                     string serverError = _stringLocalizer["DateTimeIsLow"].Value;
                     string error = string.Format(serverError, dateFromRequest, DateTime.Now);
                     throw new Exception(error);
                 }
-
-                var user = await _context.Users.Include(u => u.Categories).FirstOrDefaultAsync(u => u.Id == userId);
-
-                if (user == null)
-                    return new CreateTaskResponse();
 
                 var categoryExist = user.Categories.FirstOrDefault(c => c.Name.ToLower() == taskDto.CategoryName.ToLower()) ??
                     new Category { Name = taskDto.CategoryName, Description = taskDto.CategoryDescription };
@@ -117,7 +130,7 @@ namespace MyTaskManager.Repositories
                     TitleTask = taskDto.TitleTask,
                     Expiration = taskDto.Expiration,
                     Category = (Category)categoryExist,
-                    Priority = taskDto.Prior,
+                    Priority = Enum.Parse<PriorityFrom>(taskDto.Prior),
                     User = user
                 };
 
@@ -133,7 +146,7 @@ namespace MyTaskManager.Repositories
                     Expiration = task.Expiration,
                     CategoryName = task.Category.Name,
                     CategoryDescription = task.Category.Description,
-                    Prior = taskDto.Prior,
+                    Prior = Enum.Parse<PriorityFrom>(taskDto.Prior),
                     UserId = task.User.Id,
                     UserName = task.User.UserName
                 };
@@ -148,7 +161,7 @@ namespace MyTaskManager.Repositories
             if (oldTask.Id > 0 && !string.IsNullOrEmpty(oldTask.TitleTask))
             {
                 var dt = DateTime.Now;
-                var taskDate = taskUpdate.Expiration < oldTask.Expiration ? dt.AddHours(1) : taskUpdate.Expiration;
+                var taskDate = taskUpdate.Expiration < oldTask.Expiration ? DateTime.Now.AddHours(1) : taskUpdate.Expiration;
 
                 oldTask.TitleTask = string.IsNullOrEmpty(taskUpdate.Title) ? oldTask.TitleTask : taskUpdate.Title;
                 oldTask.Category.Name = string.IsNullOrEmpty(taskUpdate.CategoryName) ? oldTask.Category.Name : taskUpdate.CategoryName;

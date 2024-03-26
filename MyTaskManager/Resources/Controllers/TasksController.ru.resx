@@ -120,6 +120,9 @@
   <data name="DateTimeIsLow" xml:space="preserve">
     <value>Планируемая дата завершения задачи - {0}, текущая дата - {1}. Запланируйте новую дату завершения для этой задачи</value>
   </data>
+  <data name="DontUser" xml:space="preserve">
+    <value>Пользователь не существует</value>
+  </data>
   <data name="ErrorOfAddingTask" xml:space="preserve">
     <value>Произошла ошибка во время добавления новой  задачи</value>
   </data>
@@ -131,5 +134,8 @@
   </data>
   <data name="TaskIsSet" xml:space="preserve">
     <value>Задача, именуемая как - {0} уже существует.</value>
+  </data>
+  <data name="ValueDontPrefer" xml:space="preserve">
+    <value>Значение {0} недопустимо</value>
   </data>
 </root>
